@@ -17,7 +17,7 @@ At this point, the app demonstrates the learners ability to
 
 ### Screenshot Recording
 
-Below is a screenshot of the app after making improvedment based on the suggestions of my project's reviewer from Udacity/Google:
+Below is a screen recording of the Book Catalog App. Note: User Interface improvement and more advanced concepts will be incorporated on Project 9:
 
 <img src="screencapture.gif" alt="screen recording of the app" width="400px"/>
 
@@ -26,4 +26,4 @@ Below is a screenshot of the app after making improvedment based on the suggesti
 ![screen shot of the files involved in creating the app with the help of Gradle and the Android Studio IDE][filestruct]
 
 
-[filestruct]: https://github.com/roylouislgarcia/BookCatalog/blob/master/filestructure.jpg
+[filestruct]: https://github.com/roylouislgarcia/BookCatalog/blob/master/filestructure.JPG
