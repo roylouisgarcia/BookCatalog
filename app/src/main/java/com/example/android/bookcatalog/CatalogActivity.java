@@ -50,14 +50,72 @@ public class CatalogActivity extends AppCompatActivity {
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        // Perform this raw SQL query "SELECT * FROM books"
-        // to get a Cursor that contains all rows from the books table.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + BookEntry.TABLE_NAME, null);
+
+        String[] projection = {
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_TITLE,
+                BookEntry.COLUMN_BOOK_PRICE,
+                BookEntry.COLUMN_BOOK_QUANTITY,
+                BookEntry.COLUMN_BOOK_SUPPLIER,
+                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER,
+                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE
+        };
+
+        Cursor cursor = db.query(
+                BookEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TextView displayView = (TextView) findViewById(R.id.text_view_book);
+
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // books table in the database).
-            TextView displayView = (TextView) findViewById(R.id.text_view_book);
-            displayView.setText("Number of rows in books database table: " + cursor.getCount());
+
+            displayView.setText("Using Cursor to see the what is inside the database: \n\n\tNumber of rows in books database table: " + cursor.getCount() + "\n");
+
+            // Creating a header in the Text View
+            displayView.append("\n\tCurrently the database has:\n\t" + BookEntry._ID + " - " + BookEntry.COLUMN_BOOK_TITLE + " - " + BookEntry.COLUMN_BOOK_PRICE + " - " + BookEntry.COLUMN_BOOK_QUANTITY + " - " +  BookEntry.COLUMN_BOOK_SUPPLIER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE + "\n");
+
+            // Figure out the index of each column
+
+            int idColumnIndex = cursor.getColumnIndex(BookEntry._ID);
+            int bookTitleColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
+            int bookPriceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
+            int bookQuantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
+            int supplierNameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
+            int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
+            int supplierPhoneTypeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE);
+
+
+            // Iterate through all the returned rows in the cursor
+            while (cursor.moveToNext()) {
+                // Use that index to extract the String or Int value of the word
+                // at the current row the cursor is on.
+                int currentID = cursor.getInt(idColumnIndex);
+                String currentBookTitle = cursor.getString(bookTitleColumnIndex);
+                int currentBookPrice = cursor.getInt(bookPriceColumnIndex);
+                int currentBookQuantity = cursor.getInt(bookQuantityColumnIndex);
+                String currentSupplierName = cursor.getString(supplierNameColumnIndex);
+                String currentSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
+                int currentSupplierPhoneType = cursor.getInt(supplierPhoneTypeColumnIndex);
+
+                // Display the values from each column of the current row in the cursor in the TextView
+                displayView.append(("\n\t" + currentID + " - " +
+                        currentBookTitle + " - " +
+                        currentBookPrice + " - " +
+                        currentBookQuantity + " - " +
+                        currentSupplierName + " - " +
+                        currentSupplierPhoneNumber + " - " +
+                        currentSupplierPhoneType));
+            }
+            displayView.append("\n\n");
+
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
@@ -65,8 +123,8 @@ public class CatalogActivity extends AppCompatActivity {
         }
 
         // Added to erase the dataPeeker message when other menu items other than the one inserting data from a populated activity_editor form
-        TextView displayView = (TextView) findViewById(R.id.text_view_data_peek);
-        displayView.setText("");
+        TextView displayViewPeek = (TextView) findViewById(R.id.text_view_data_peek);
+        displayViewPeek.setText("");
     }
 
 
