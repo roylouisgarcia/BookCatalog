@@ -2,6 +2,7 @@ package com.example.android.bookcatalog.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -14,6 +15,18 @@ public class BookCatalogProvider extends ContentProvider {
     public static final String LOG_TAG = BookCatalogProvider.class.getSimpleName();
     /** Initialization of a BookCatalogDbHelper */
     private BookCatalogDbHelper mDbHelper;
+
+
+    private static final int BOOKS = 100;
+    private static final int BOOK_ID = 101;
+
+    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    static{
+        sUriMatcher.addURI(BookCatalogContract.CONTENT_AUTHORITY, BookCatalogContract.PATH_BOOKS, BOOKS);
+        sUriMatcher.addURI(BookCatalogContract.CONTENT_AUTHORITY, BookCatalogContract.PATH_BOOKS + "/#", BOOK_ID);
+    }
+
 
 
     /**
