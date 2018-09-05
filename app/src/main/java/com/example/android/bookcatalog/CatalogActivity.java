@@ -47,8 +47,6 @@ public class CatalogActivity extends AppCompatActivity {
         // and pass the context, which is the current activity.
         BookCatalogDbHelper mDbHelper = new BookCatalogDbHelper(this);
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 
         String[] projection = {
@@ -61,15 +59,13 @@ public class CatalogActivity extends AppCompatActivity {
                 BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE
         };
 
-        Cursor cursor = db.query(
-                BookEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
+        /*
+        Perform a query on the provider using the ContentResolver instead of directly querying the database
+        Use the {@link BookEntry#CONTENT_URI}  to access the book data
+        */
+        Cursor cursor = getContentResolver().query(BookEntry.CONTENT_URI, projection, null, null, null);
+
+
 
         TextView displayView = (TextView) findViewById(R.id.text_view_book);
 
