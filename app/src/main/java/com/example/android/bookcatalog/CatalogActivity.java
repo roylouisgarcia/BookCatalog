@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -153,9 +154,13 @@ public class CatalogActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Harry Potter
-        long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+        //long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+        Uri insert = getContentResolver().insert(BookEntry.CONTENT_URI, values);
 
-        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted", Toast.LENGTH_SHORT);
+        // String-holder to display the returned URI after the insert to the Toast Message
+        String uriString = insert.toString();
+
+        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted" + uriString, Toast.LENGTH_SHORT);
         toast.show();
     }
 

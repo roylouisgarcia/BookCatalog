@@ -15,9 +15,11 @@
  */
 package com.example.android.bookcatalog;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -153,15 +155,21 @@ public class EditorActivity extends AppCompatActivity {
 
 
         // Insert a new row for a book that is newly inserted to the database and return the ID of that new row.
-        long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+//        long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+
+        Uri insertResults = getContentResolver().insert(BookEntry.CONTENT_URI, values);
+
+        // String-holder to display the returned URI after the insert to the Toast Message
+        String uriString = insertResults.toString();
+        String newRowId = String.valueOf(ContentUris.parseId(insertResults));
 
         // Show a toast message for insertion result
-        if (newRowId == -1) {
+        if (newRowId == "-1") {
             // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving the book", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error with saving the book", Toast.LENGTH_LONG).show();
         } else {
             // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_LONG).show();
         }
     }
 

@@ -62,7 +62,6 @@ public class BookCatalogProvider extends ContentProvider {
                 // For the BOOKS code, query the pets table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
                 // could contain multiple rows of the pets table.
-                // TODO: Perform database query on pets table
                 cursor = database.query(BookCatalogContract.BookEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
 
                 break;
@@ -90,11 +89,33 @@ public class BookCatalogProvider extends ContentProvider {
     }
 
     /**
-     * Insert new data into the provider with the given ContentValues.
+     *  Replaced direct access insert method with one that utilizes URI Matcher and proper ContentProvider concepts
      */
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case BOOKS:
+                return insertBook(uri, contentValues);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Insert a book into the database with the given content values. Return the new content URI
+     * for that specific row in the database.
+     */
+    private Uri insertBook(Uri uri, ContentValues values) {
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // TODO: Insert a new book into the books database table with the given ContentValues
+        long id = db.insert(BookCatalogContract.BookEntry.TABLE_NAME, null, values);
+
+        // Once we know the ID of the new row in the table,
+        // return the new URI with the ID appended to the end of it
+        return ContentUris.withAppendedId(uri, id);
     }
 
     /**
