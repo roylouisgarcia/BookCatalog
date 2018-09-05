@@ -19,7 +19,7 @@ import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
 
-    private BookCatalogDbHelper mDbHelper;
+  //  private BookCatalogDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mDbHelper = new BookCatalogDbHelper(this);
+   //     mDbHelper = new BookCatalogDbHelper(this);
 
         displayDatabaseInfo();
 
@@ -135,7 +135,7 @@ public class CatalogActivity extends AppCompatActivity {
     //This will insert a dummy data
     private void insertBook(){
         // Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        //SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Create a ContentValues object where column names are the keys,
         // and a made values are inserted.
@@ -155,10 +155,10 @@ public class CatalogActivity extends AppCompatActivity {
         // there are no values).
         // The third argument is the ContentValues object containing the info for Harry Potter
         //long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
-        Uri insert = getContentResolver().insert(BookEntry.CONTENT_URI, values);
+        Uri insertUri = getContentResolver().insert(BookEntry.CONTENT_URI, values);
 
         // String-holder to display the returned URI after the insert to the Toast Message
-        String uriString = insert.toString();
+        String uriString = insertUri.toString();
 
         Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted" + uriString, Toast.LENGTH_SHORT);
         toast.show();
@@ -166,8 +166,8 @@ public class CatalogActivity extends AppCompatActivity {
 
     // This is used to delete all the books from the table
     private void deleteAllBooks(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.execSQL("delete from " + BookEntry.TABLE_NAME);
+  //      SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//        db.execSQL("delete from " + BookEntry.TABLE_NAME);
         Toast toast2 = Toast.makeText(CatalogActivity.this, "Dummy Book entries will be deleted", Toast.LENGTH_SHORT);
         toast2.show();
     }

@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * {@link ContentProvider} for Books app.
@@ -112,6 +113,12 @@ public class BookCatalogProvider extends ContentProvider {
 
         // TODO: Insert a new book into the books database table with the given ContentValues
         long id = db.insert(BookCatalogContract.BookEntry.TABLE_NAME, null, values);
+
+        // error checking incase insertion fails
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
 
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
