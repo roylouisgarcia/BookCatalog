@@ -19,7 +19,7 @@ import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
 
-  //  private BookCatalogDbHelper mDbHelper;
+    private BookCatalogDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +34,9 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-   //     mDbHelper = new BookCatalogDbHelper(this);
+        mDbHelper = new BookCatalogDbHelper(this);
 
         displayDatabaseInfo();
-
-
 
     }
 
@@ -57,7 +55,7 @@ public class CatalogActivity extends AppCompatActivity {
                 BookEntry.COLUMN_BOOK_QUANTITY,
                 BookEntry.COLUMN_BOOK_SUPPLIER,
                 BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER,
-                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE
+                BookEntry.COLUMN_BOOK_TYPE
         };
 
         /*
@@ -77,7 +75,7 @@ public class CatalogActivity extends AppCompatActivity {
             displayView.setText("Using Cursor to see the what is inside the database: \n\n\tNumber of rows in books database table: " + cursor.getCount() + "\n");
 
             // Creating a header in the Text View
-            displayView.append("\n\tCurrently the database has:\n\t" + BookEntry._ID + " - " + BookEntry.COLUMN_BOOK_TITLE + " - " + BookEntry.COLUMN_BOOK_PRICE + " - " + BookEntry.COLUMN_BOOK_QUANTITY + " - " +  BookEntry.COLUMN_BOOK_SUPPLIER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE + "\n");
+            displayView.append("\n\tCurrently the database has:\n\t" + BookEntry._ID + " - " + BookEntry.COLUMN_BOOK_TITLE + " - " + BookEntry.COLUMN_BOOK_PRICE + " - " + BookEntry.COLUMN_BOOK_QUANTITY + " - " +  BookEntry.COLUMN_BOOK_SUPPLIER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " - " + BookEntry.COLUMN_BOOK_TYPE + "\n");
 
             // Figure out the index of each column
 
@@ -87,7 +85,7 @@ public class CatalogActivity extends AppCompatActivity {
             int bookQuantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
             int supplierNameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
             int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-            int supplierPhoneTypeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE);
+            int bookTypeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
 
 
             // Iterate through all the returned rows in the cursor
@@ -100,7 +98,7 @@ public class CatalogActivity extends AppCompatActivity {
                 int currentBookQuantity = cursor.getInt(bookQuantityColumnIndex);
                 String currentSupplierName = cursor.getString(supplierNameColumnIndex);
                 String currentSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
-                int currentSupplierPhoneType = cursor.getInt(supplierPhoneTypeColumnIndex);
+                int currentBookType = cursor.getInt(bookTypeColumnIndex);
 
                 // Display the values from each column of the current row in the cursor in the TextView
                 displayView.append(("\n\t" + currentID + " - " +
@@ -109,7 +107,7 @@ public class CatalogActivity extends AppCompatActivity {
                         currentBookQuantity + " - " +
                         currentSupplierName + " - " +
                         currentSupplierPhoneNumber + " - " +
-                        currentSupplierPhoneType));
+                        currentBookType));
             }
             displayView.append("\n\n");
 
@@ -119,9 +117,6 @@ public class CatalogActivity extends AppCompatActivity {
             cursor.close();
         }
 
-        // Added to erase the dataPeeker message when other menu items other than the one inserting data from a populated activity_editor form
-        TextView displayViewPeek = (TextView) findViewById(R.id.text_view_data_peek);
-        displayViewPeek.setText("");
     }
 
 
@@ -142,9 +137,9 @@ public class CatalogActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(BookEntry.COLUMN_BOOK_TITLE, "Harry Potter");
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER, "JK Rowling");
-        values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE, BookEntry.PHONE_TYPE_HOME);
+        values.put(BookEntry.COLUMN_BOOK_TYPE, BookEntry.BOOK_TYPE_HARDCOVER);
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, "333-222-1111");
-        values.put(BookEntry.COLUMN_BOOK_PRICE, "$10");
+        values.put(BookEntry.COLUMN_BOOK_PRICE, "10");
         values.put(BookEntry.COLUMN_BOOK_QUANTITY, 10);
 
         // Insert a new row for Harry Potter in the database, returning the ID of that new row.
@@ -166,32 +161,18 @@ public class CatalogActivity extends AppCompatActivity {
 
     // This is used to delete all the books from the table
     private void deleteAllBooks(){
-  //      SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//        db.execSQL("delete from " + BookEntry.TABLE_NAME);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.execSQL("delete from " + BookEntry.TABLE_NAME);
         Toast toast2 = Toast.makeText(CatalogActivity.this, "Dummy Book entries will be deleted", Toast.LENGTH_SHORT);
         toast2.show();
     }
 
-    // This method extracts a string passed from the EditorActivity class; Exception catching is used to bypass a Null Pointer Exception when the app runs for the first time and has not visited the EditorActivity yet, thus dataPeeker value is NULL
-    private void displayDataPeek(){
-        Intent intent = getIntent();
-        String dataPeeker = "";
-        TextView textViewPeek = (TextView) findViewById(R.id.text_view_data_peek);
-        try{
-            dataPeeker = intent.getExtras().getString("dataPeeker");
-            textViewPeek.setText(dataPeeker);
-        }catch (NullPointerException nullPointer){
-            textViewPeek.setText("");
-        }
-
-    }
 
     // Refreshes the displayDatabaseInfo() from altering the database via FAB
     @Override
     protected void onStart() {
         super.onStart();
         displayDatabaseInfo();
-        displayDataPeek();
     }
 
     @Override

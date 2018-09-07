@@ -57,15 +57,14 @@ public class EditorActivity extends AppCompatActivity {
     private EditText mBookQuantityEditText;
 
     /** Spinner input to select the phone type */
-    private Spinner mSupplierPhoneTypeSpinner;
+    private Spinner mBookTypeSpinner;
 
     /**
-     * Type of phone. The possible values are:
-     * 0 for home, 1 for mobile, 2 for work.
+     * Type of book. The possible values are:
+     * 0 for hardcover, 1 for paperback, 2 for electronic.
      */
-    private int mPhoneType = 0;
+    private int mBookType = 0;
 
-    private String dataPeeker ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +77,7 @@ public class EditorActivity extends AppCompatActivity {
         mSupplierNameEditText = (EditText) findViewById(R.id.edit_book_supplier_name);
         mBookPriceEditText = (EditText) findViewById(R.id.edit_book_price);
         mBookQuantityEditText = (EditText) findViewById(R.id.edit_book_quantity);
-        mSupplierPhoneTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
+        mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
 
         setupSpinner();
     }
@@ -90,26 +89,26 @@ public class EditorActivity extends AppCompatActivity {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
         ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_phone_options, android.R.layout.simple_spinner_item);
+                R.array.book_type_options, android.R.layout.simple_spinner_item);
 
         // Specify dropdown layout style - simple list view with 1 item per line
         genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
-        mSupplierPhoneTypeSpinner.setAdapter(genderSpinnerAdapter);
+        mBookTypeSpinner.setAdapter(genderSpinnerAdapter);
 
         // Set the integer mSelected to the constant values
-        mSupplierPhoneTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mBookTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(getString(R.string.phone_type_mobile))) {
-                        mPhoneType = BookEntry.PHONE_TYPE_MOBILE; // Mobile
-                    } else if (selection.equals(getString(R.string.phone_type_work))) {
-                        mPhoneType = BookEntry.PHONE_TYPE_WORK; // Work
+                    if (selection.equals(getString(R.string.book_type_hardcover))) {
+                        mBookType = BookEntry.BOOK_TYPE_HARDCOVER; // Hardcover
+                    } else if (selection.equals(getString(R.string.book_type_paperback))) {
+                        mBookType = BookEntry.BOOK_TYPE_PAPERBACK; // Paperback
                     } else {
-                        mPhoneType = BookEntry.PHONE_TYPE_HOME; // Home
+                        mBookType = BookEntry.BOOK_TYPE_ELECTRONIC; // Electronic
                     }
                 }
             }
@@ -117,7 +116,7 @@ public class EditorActivity extends AppCompatActivity {
             // Because AdapterView is an abstract class, onNothingSelected must be defined
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mPhoneType = 0; // Unknown
+                mBookType = 0; // Hardcover
             }
         });
     }
@@ -126,7 +125,6 @@ public class EditorActivity extends AppCompatActivity {
     private void insertBooks(){
 
         // Reading the inputs
-
         String mBookTitleString = mBookTitleEditText.getText().toString().trim();
         String mBookPriceString = mBookPriceEditText.getText().toString().trim();
         int bookPrice = Integer.parseInt(mBookPriceString);
@@ -134,9 +132,8 @@ public class EditorActivity extends AppCompatActivity {
         int bookQuantity = Integer.parseInt(mBookQuantityString);
         String mSupplierNameString = mSupplierNameEditText.getText().toString().trim();
         String mSupplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
-        int suppierPhoneType = mPhoneType;
+        int bookType = mBookType;
 
-        dataPeeker = "Recent Book inserted: \n\nTitle: " + mBookTitleString + "\nPrice: $" + bookPrice + "\nQuantity: " + bookQuantity + "\nSupplier Name: " + mSupplierNameString + "\nSupplier Phone: " + mSupplierPhoneString + "\nPhone type: " + mPhoneType;
         // Create an instance of a BookCataglogDbHelper
         BookCatalogDbHelper mDbHelper = new BookCatalogDbHelper(this);
 
@@ -151,7 +148,7 @@ public class EditorActivity extends AppCompatActivity {
         values.put(BookEntry.COLUMN_BOOK_QUANTITY, bookQuantity);
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER, mSupplierNameString);
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, mSupplierPhoneString);
-        values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE, suppierPhoneType);
+        values.put(BookEntry.COLUMN_BOOK_TYPE, bookType);
 
 
         // Insert a new row for a book that is newly inserted to the database and return the ID of that new row.
@@ -164,12 +161,12 @@ public class EditorActivity extends AppCompatActivity {
         String newRowId = String.valueOf(ContentUris.parseId(insertResults));
 
         // Show a toast message for insertion result
-        if (newRowId == "-1") {
+        if (newRowId == null) {
             // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this, "Error with saving the book", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,R.string.editor_insert_book_failed, Toast.LENGTH_LONG).show();
         } else {
             // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.editor_insert_book_successful + newRowId + "\n" + uriString, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -182,11 +179,6 @@ public class EditorActivity extends AppCompatActivity {
     }
 
 
-    private void passInfo(){
-        Intent i = new Intent(this, CatalogActivity.class);
-        i.putExtra("dataPeeker", dataPeeker);
-        startActivity(i);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -196,7 +188,6 @@ public class EditorActivity extends AppCompatActivity {
             case R.id.action_save:
                 // Insert data from form
                 insertBooks();
-                passInfo();
                 finish();
                 Toast toast_save = Toast.makeText(EditorActivity.this, "New Book Saved" , Toast.LENGTH_SHORT);
                 toast_save.show();

@@ -89,6 +89,8 @@ public class BookCatalogProvider extends ContentProvider {
         return cursor;
     }
 
+
+
     /**
      *  Replaced direct access insert method with one that utilizes URI Matcher and proper ContentProvider concepts
      */
@@ -108,6 +110,39 @@ public class BookCatalogProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertBook(Uri uri, ContentValues values) {
+
+        // Sanity Checks
+        String bookTitle = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_TITLE);
+        if (bookTitle == null || bookTitle == ""){
+             throw new IllegalArgumentException("Book requires a title");
+        }
+
+        Integer bookPrice = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_PRICE);
+        if (bookPrice != null && bookPrice < 0){
+            throw new IllegalArgumentException("Book requires a valid price");
+        }
+
+        Integer bookQuantity = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_QUANTITY);
+        if (bookQuantity != null && bookQuantity < 0){
+            throw new IllegalArgumentException("Book requires a valid quantity");
+        }
+/*        String bookSupplier = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_SUPPLIER);
+        if (bookSupplier == null){
+            throw new IllegalArgumentException("Book requires a supplier");
+        }
+
+        String bookSupplierPhoneNumber = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
+        if (bookSupplierPhoneNumber == null){
+            throw new IllegalArgumentException("Book requires a supplier phone number");
+        }*/
+
+        Integer bookType = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_TYPE);
+        if (bookType == null || !BookCatalogContract.BookEntry.isValidBookType(bookType)){
+            throw new IllegalArgumentException("Book requires a valid type");
+        }
+
+
+
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 

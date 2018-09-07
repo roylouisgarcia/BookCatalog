@@ -32,7 +32,7 @@
     <!-- Label for overview category of attributes in the editor [CHAR LIMIT=30] -->
     <string name="category_general_info">Book Info</string>
     <!-- Label for gender information in the editor [CHAR LIMIT=30] -->
-    <string name="category_phone_type">Phone Type</string>
+    <string name="category_book_type">Book Type</string>
     <!-- Label for measurement information in the editor [CHAR LIMIT=30] -->
     <string name="category_supplier_info">Supplier\'s Info</string>
 
@@ -48,12 +48,18 @@
     <!-- Text hint for the quantity field in the editor [CHAR LIMIT=30] -->
     <string name="hint_book_quantity">Quantity</string>
 
+    <!-- Label for dropdown menu option if the book type is a hardcover[CHAR LIMIT=20] -->
+    <string name="book_type_hardcover">Hardcover</string>
+    <!-- Label for dropdown menu option if the book type is a paperback[CHAR LIMIT=20] -->
+    <string name="book_type_paperback">Paperback</string>
+    <!-- Label for dropdown menu option if the book type is an electronic book [CHAR LIMIT=20] -->
+    <string name="book_type_electronic">Electronic</string>
 
-    <!-- Label for dropdown menu option if the book supplier's phone type is a home phone[CHAR LIMIT=20] -->
-    <string name="phone_type_home">Home</string>
-    <!-- Label for dropdown menu option if the book supplier's phone type is a mobile phone [CHAR LIMIT=20] -->
-    <string name="phone_type_mobile">Mobile</string>
-    <!-- Label for dropdown menu option if the book supplier's phone type is a work phone [CHAR LIMIT=20] -->
-    <string name="phone_type_work">Work</string>
+
+    <!-- Toast message in editor when new book has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_book_successful">Book saved</string>
+    <!-- Toast message in editor when new book has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_book_failed">Error with saving book</string>
+
 
 </resources>
