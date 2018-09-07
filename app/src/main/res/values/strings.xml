@@ -61,5 +61,8 @@
     <!-- Toast message in editor when new book has failed to be inserted [CHAR LIMIT=NONE] -->
     <string name="editor_insert_book_failed">Error with saving book</string>
 
+    <!-- Tools text for itembook.xml -->
+    <string name="item_book_title">The Godfather Returns</string>
+    <string name="item_book_price">$50.00</string>
 
 </resources>

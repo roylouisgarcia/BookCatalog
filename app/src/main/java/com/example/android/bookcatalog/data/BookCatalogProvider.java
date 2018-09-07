@@ -38,7 +38,7 @@ public class BookCatalogProvider extends ContentProvider {
      */
     @Override
     public boolean onCreate() {
-        // TODO: Create and initialize a BookDbHelper object to gain access to the books database.
+        // Create and initialize a BookDbHelper object to gain access to the books database.
         // Make sure the variable is a global variable, so it can be referenced from other
         // ContentProvider methods.
         mDbHelper = new BookCatalogDbHelper(getContext());
@@ -136,7 +136,7 @@ public class BookCatalogProvider extends ContentProvider {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        // TODO: Insert a new book into the books database table with the given ContentValues
+        // Insert a new book into the books database table with the given ContentValues
         long id = db.insert(BookCatalogContract.BookEntry.TABLE_NAME, null, values);
 
         // error checking incase insertion fails
@@ -215,10 +215,10 @@ public class BookCatalogProvider extends ContentProvider {
 
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        // TODO: Update the selected books in the books database table with the given ContentValues
+        // Update the selected books in the books database table with the given ContentValues
         int updateResult = db.update(BookCatalogContract.BookEntry.TABLE_NAME, values, selection, selectionArgs);
 
-        // TODO: Return the number of rows that were affected
+        //  Return the number of rows that were affected
         return updateResult;
     }
 
@@ -227,7 +227,22 @@ public class BookCatalogProvider extends ContentProvider {
      */
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        // Get writeable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case BOOKS:
+                // Delete all rows that match the selection and selection args
+                return database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+            case BOOK_ID:
+                // Delete a single row given by the ID in the URI
+                selection = BookCatalogContract.BookEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
     }
 
     /**
@@ -235,6 +250,14 @@ public class BookCatalogProvider extends ContentProvider {
      */
     @Override
     public String getType(Uri uri) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case BOOKS:
+                return BookCatalogContract.BookEntry.CONTENT_LIST_TYPE;
+            case BOOK_ID:
+                return BookCatalogContract.BookEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+        }
     }
 }
