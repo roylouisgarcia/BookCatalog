@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -113,7 +114,7 @@ public class BookCatalogProvider extends ContentProvider {
 
         // Sanity Checks
         String bookTitle = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_TITLE);
-        if (bookTitle == null || bookTitle == ""){
+        if (bookTitle == null || TextUtils.isEmpty(bookTitle)){
              throw new IllegalArgumentException("Book requires a title");
         }
 
@@ -126,22 +127,11 @@ public class BookCatalogProvider extends ContentProvider {
         if (bookQuantity != null && bookQuantity < 0){
             throw new IllegalArgumentException("Book requires a valid quantity");
         }
-/*        String bookSupplier = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_SUPPLIER);
-        if (bookSupplier == null){
-            throw new IllegalArgumentException("Book requires a supplier");
-        }
-
-        String bookSupplierPhoneNumber = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-        if (bookSupplierPhoneNumber == null){
-            throw new IllegalArgumentException("Book requires a supplier phone number");
-        }*/
 
         Integer bookType = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_TYPE);
         if (bookType == null || !BookCatalogContract.BookEntry.isValidBookType(bookType)){
             throw new IllegalArgumentException("Book requires a valid type");
         }
-
-
 
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -164,8 +154,72 @@ public class BookCatalogProvider extends ContentProvider {
      * Updates the data at the given selection and selection arguments, with the new ContentValues.
      */
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection,
+                      String[] selectionArgs) {
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case BOOKS:
+                return updateBook(uri, contentValues, selection, selectionArgs);
+            case BOOK_ID:
+                // For the BOOK_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = BookCatalogContract.BookEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return updateBook(uri, contentValues, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Update books in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more books).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updateBook(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        // Sanity Checks
+        if (values.containsKey(BookCatalogContract.BookEntry.COLUMN_BOOK_TITLE)){
+            String bookTitle = values.getAsString(BookCatalogContract.BookEntry.COLUMN_BOOK_TITLE);
+            if (bookTitle == null || TextUtils.isEmpty(bookTitle)){
+                throw new IllegalArgumentException("Book requires a title");
+            }
+        }
+
+        if (values.containsKey(BookCatalogContract.BookEntry.COLUMN_BOOK_PRICE)){
+
+            Integer bookPrice = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_PRICE);
+            if (bookPrice != null && bookPrice < 0){
+                throw new IllegalArgumentException("Book requires a valid price");
+            }
+        }
+
+        if (values.containsKey(BookCatalogContract.BookEntry.COLUMN_BOOK_QUANTITY)){
+            Integer bookQuantity = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_QUANTITY);
+            if (bookQuantity != null && bookQuantity < 0){
+                throw new IllegalArgumentException("Book requires a valid quantity");
+            }
+        }
+
+        if (values.containsKey(BookCatalogContract.BookEntry.COLUMN_BOOK_TYPE)){
+            Integer bookType = values.getAsInteger(BookCatalogContract.BookEntry.COLUMN_BOOK_TYPE);
+            if (bookType == null || !BookCatalogContract.BookEntry.isValidBookType(bookType)){
+                throw new IllegalArgumentException("Book requires a valid type");
+            }
+        }
+
+        if (values.size() == 0){
+            return 0;
+        }
+
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        // TODO: Update the selected books in the books database table with the given ContentValues
+        int updateResult = db.update(BookCatalogContract.BookEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        // TODO: Return the number of rows that were affected
+        return updateResult;
     }
 
     /**
