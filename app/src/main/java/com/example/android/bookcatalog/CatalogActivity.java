@@ -11,10 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.bookcatalog.data.BookCatalogContract;
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
+import com.example.android.bookcatalog.data.BookCatalogCursorAdapter;
 import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
@@ -44,9 +46,6 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
-        BookCatalogDbHelper mDbHelper = new BookCatalogDbHelper(this);
-
-
 
         String[] projection = {
                 BookEntry._ID,
@@ -55,67 +54,16 @@ public class CatalogActivity extends AppCompatActivity {
                 BookEntry.COLUMN_BOOK_QUANTITY,
                 BookEntry.COLUMN_BOOK_SUPPLIER,
                 BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER,
-                BookEntry.COLUMN_BOOK_TYPE
-        };
+                BookEntry.COLUMN_BOOK_TYPE};
 
-        /*
-        Perform a query on the provider using the ContentResolver instead of directly querying the database
-        Use the {@link BookEntry#CONTENT_URI}  to access the book data
-        */
         Cursor cursor = getContentResolver().query(BookEntry.CONTENT_URI, projection, null, null, null);
 
+        ListView lvItems = (ListView) findViewById(R.id.list);
 
+        BookCatalogCursorAdapter bookAdapter = new BookCatalogCursorAdapter(this,cursor);
 
-        TextView displayView = (TextView) findViewById(R.id.text_view_book);
+        lvItems.setAdapter(bookAdapter);
 
-        try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // books table in the database).
-
-            displayView.setText("Using Cursor to see the what is inside the database: \n\n\tNumber of rows in books database table: " + cursor.getCount() + "\n");
-
-            // Creating a header in the Text View
-            displayView.append("\n\tCurrently the database has:\n\t" + BookEntry._ID + " - " + BookEntry.COLUMN_BOOK_TITLE + " - " + BookEntry.COLUMN_BOOK_PRICE + " - " + BookEntry.COLUMN_BOOK_QUANTITY + " - " +  BookEntry.COLUMN_BOOK_SUPPLIER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " - " + BookEntry.COLUMN_BOOK_TYPE + "\n");
-
-            // Figure out the index of each column
-
-            int idColumnIndex = cursor.getColumnIndex(BookEntry._ID);
-            int bookTitleColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
-            int bookPriceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
-            int bookQuantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
-            int supplierNameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
-            int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-            int bookTypeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
-
-
-            // Iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentBookTitle = cursor.getString(bookTitleColumnIndex);
-                int currentBookPrice = cursor.getInt(bookPriceColumnIndex);
-                int currentBookQuantity = cursor.getInt(bookQuantityColumnIndex);
-                String currentSupplierName = cursor.getString(supplierNameColumnIndex);
-                String currentSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
-                int currentBookType = cursor.getInt(bookTypeColumnIndex);
-
-                // Display the values from each column of the current row in the cursor in the TextView
-                displayView.append(("\n\t" + currentID + " - " +
-                        currentBookTitle + " - " +
-                        currentBookPrice + " - " +
-                        currentBookQuantity + " - " +
-                        currentSupplierName + " - " +
-                        currentSupplierPhoneNumber + " - " +
-                        currentBookType));
-            }
-            displayView.append("\n\n");
-
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
 
     }
 
