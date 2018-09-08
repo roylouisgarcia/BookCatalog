@@ -20,4 +20,12 @@
         android:layout_marginLeft="@dimen/tv_item_margin"/>
         android:textAppearance="?android:textAppearanceMedium"/>
 
+    <TextView
+        android:id="@+id/item_tv_type"
+        tools:text="@string/book_type_electronic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/tv_item_margin"
+        android:textAppearance="?android:textAppearanceMedium"/>
+
 </LinearLayout>

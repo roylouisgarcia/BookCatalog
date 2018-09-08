@@ -56,17 +56,34 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
         /* Prepare the TextViews from the inflated template that will be populated from the cursor */
         TextView itemTitleTextView = (TextView) view.findViewById(R.id.item_tv_title);
         TextView itemPriceTextView = (TextView) view.findViewById(R.id.item_tv_price);
+        TextView itemTypeTextView = (TextView) view.findViewById(R.id.item_tv_type);
 
         /* Find the colums corresponding to the TextViews prepared to populate the item list */
         int titleColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
         int priceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
+        int typeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
 
         /* Extract the book attributes from the cursor for the current book */
         String bookTitle = cursor.getString(titleColumnIndex);
         String bookPrice = cursor.getString(priceColumnIndex);
+        Integer bookType = cursor.getInt(typeColumnIndex);
 
+        /* identify which bookType label to display on an item list based on the numerical value */
+        String bookTypeLabel = "";
+        switch (bookType){
+            case 0:
+                bookTypeLabel = context.getResources().getString(R.string.book_type_hardcover);
+                break;
+            case 1:
+                bookTypeLabel = context.getResources().getString(R.string.book_type_paperback);
+                break;
+            default:
+                bookTypeLabel = context.getResources().getString(R.string.book_type_electronic);
+                break;
+        }
         itemTitleTextView.setText(bookTitle);
         itemPriceTextView.setText("$" + bookPrice);
+        itemTypeTextView.setText(bookTypeLabel);
 
     }
 }

@@ -68,4 +68,9 @@
     <!--Text for empty book catalog listings -->
     <string name="empty_view_title_text">Your book catalog is currently empty</string>
     <string name="empty_view_subtitle_text">Start adding some books to your catalog</string>
+
+    <!-- Text Labels on what type of book to display for list books items -->
+    <string name="item_book_type_hardcover">HARDCOVER</string>
+    <string name="item_book_type_paperback">PAPERBACK</string>
+    <string name="item_book_type_electronic">ELECTRONIC</string>
 </resources>
