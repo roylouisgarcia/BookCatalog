@@ -86,7 +86,12 @@
     <string name="editor_toast_message_delete">You have successfully deleted the book</string>
 
     <!-- Toast Messages for the editor activity when user accidentally press save with a blank editor-->
-    <string name="editor_toast_message_blank">Ooops, you cannot save a book with blank information</string>
+    <string name="editor_toast_message_blank">Ooops, required \"Book Info\" cannot have blank information</string>
+
+    <!-- Discard changes dialog messages -->
+    <string name="unsaved_dialog_msg">Discard your changes and quit</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
 
 
 </resources>

@@ -15,9 +15,11 @@
  */
 package com.example.android.bookcatalog;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -29,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -73,9 +76,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     private int mBookType = 0;
 
-    // designed to prevent crashing on blank editor
-    private int safeToSaveFlag = 0;
-
+    // a variable to keep track if updates are necessary
+    private boolean mBookHasChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +109,62 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mBookQuantityEditText = (EditText) findViewById(R.id.edit_book_quantity);
         mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
 
+        // Attach a TouchListener on fields that user may edit
+        mBookTitleEditText.setOnTouchListener(mTouchListener);
+        mSupplierPhoneEditText.setOnTouchListener(mTouchListener);
+        mSupplierNameEditText.setOnTouchListener(mTouchListener);
+        mBookPriceEditText.setOnTouchListener(mTouchListener);
+        mBookQuantityEditText.setOnTouchListener(mTouchListener);
+        mBookTypeSpinner.setOnTouchListener(mTouchListener);
+
         setupSpinner();
 
+    }
+
+    // OnTouchListener that listens for any user touches on a View, implying that they are modifying
+    // the view, and we change the mBookHasChanged boolean to true.
+
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mBookHasChanged = true;
+            return false;
+        }
+    };
+
+    // a method that will create a "Discard Changes" dialog
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_dialog_msg);
+        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void onBackPressed(){
+        if (!mBookHasChanged){
+            super.onBackPressed();
+            return;
+        }
+
+        DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+        // Show dialog that there are unsaved changes
+        showUnsavedChangesDialog(discardButtonClickListener);
     }
 
     /**
@@ -153,11 +209,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private void saveBook() {
 
-        if (TextUtils.isEmpty(mBookTitleEditText.getText()) || TextUtils.isEmpty(mBookPriceEditText.getText()) || TextUtils.isEmpty(mBookQuantityEditText.getText())) {
-            safeToSaveFlag++;
-        }
-
-        if (safeToSaveFlag == 0) {
             // Reading the inputs
             String mBookTitleString = mBookTitleEditText.getText().toString().trim();
             String mBookPriceString = mBookPriceEditText.getText().toString().trim();
@@ -201,9 +252,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 saveResultsUpdateBook = getContentResolver().update(mCurrentBookUri, values, currentIdOfBookBeingUpdated, null);
                 Toast.makeText(this, getResources().getString(R.string.editor_toast_message_update) + ". " + saveResultsUpdateBook + " row updated.", Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.editor_toast_message_blank), Toast.LENGTH_LONG).show();
-        }
+
 
     }
 
@@ -223,12 +272,25 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Insert data from form
-                saveBook();
-                finish();
-                Toast toast_save = Toast.makeText(EditorActivity.this, "Book Saved" , Toast.LENGTH_SHORT);
-                toast_save.show();
-                return true;
+
+                // a variable as condition to prevent crashing on blank editor
+                int safeToSaveFlag = 0;
+
+
+                if (TextUtils.isEmpty(mBookTitleEditText.getText()) || TextUtils.isEmpty(mBookPriceEditText.getText()) || TextUtils.isEmpty(mBookQuantityEditText.getText())) {
+                    safeToSaveFlag++;
+                }
+
+                if (safeToSaveFlag == 0) {
+                    // Insert data from form
+                    saveBook();
+                    finish();
+                    return true;
+
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.editor_toast_message_blank), Toast.LENGTH_LONG).show();
+                    return true;
+                }
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Do nothing for now
@@ -238,7 +300,20 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
                 // Navigate back to parent activity (CatalogActivity)
-                NavUtils.navigateUpFromSameTask(this);
+                if (!mBookHasChanged){
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+                }
+
+                // If there are unsaved messages, show the discard data message
+                DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                    }
+                };
+
+                showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
         }
         return super.onOptionsItemSelected(item);
