@@ -10,7 +10,7 @@ public class BookCatalogDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Books.db";
 
-    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + BookEntry.TABLE_NAME + " (" + BookEntry._ID + " INTEGER PRIMARY KEY," + BookEntry.COLUMN_BOOK_TITLE + " TEXT," + BookEntry.COLUMN_BOOK_SUPPLIER + " TEXT," + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " TEXT," + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE + " TEXT," + BookEntry.COLUMN_BOOK_PRICE + " TEXT," + BookEntry.COLUMN_BOOK_QUANTITY + " TEXT)";
+    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + BookEntry.TABLE_NAME + " (" + BookEntry._ID + " INTEGER PRIMARY KEY, " + BookEntry.COLUMN_BOOK_TITLE + " TEXT NOT NULL," + BookEntry.COLUMN_BOOK_SUPPLIER + " TEXT, " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " TEXT, " + BookEntry.COLUMN_BOOK_TYPE + " INTEGER NOT NULL, " + BookEntry.COLUMN_BOOK_PRICE + " INTEGER NOT NULL DEFAULT 0, " + BookEntry.COLUMN_BOOK_QUANTITY + " INTEGER NOT NULL DEFAULT 0)";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME;
 
