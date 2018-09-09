@@ -305,8 +305,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Do nothing for now
-                Toast toast_delete = Toast.makeText(EditorActivity.this, "Book Deleted", Toast.LENGTH_SHORT);
-                toast_delete.show();
+                showDeleteConfirmationDialog();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -328,6 +327,49 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the book.
+                deleteBook();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the book.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Perform the deletion of the book in the database.
+     */
+    private void deleteBook() {
+        // TODO: Implement this method
+        if (mCurrentBookUri != null){
+            String currentIdOfBookBeingDeleted;
+            currentIdOfBookBeingDeleted = String.valueOf(ContentUris.parseId(mCurrentBookUri));
+            int delete = getContentResolver().delete(mCurrentBookUri, currentIdOfBookBeingDeleted,null);
+            Toast toast_delete = Toast.makeText(EditorActivity.this, delete + " book deleted", Toast.LENGTH_SHORT);
+            toast_delete.show();
+            finish();
+        }
+
     }
 
 
