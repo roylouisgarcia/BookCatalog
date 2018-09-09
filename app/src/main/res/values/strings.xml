@@ -23,6 +23,9 @@
     <!-- Title for the activity to add a new book [CHAR LIMIT=20] -->
     <string name="editor_activity_title_new_book">Add a Book</string>
 
+    <!-- TItle for the activity to edit an existing book -->
+    <string name="editor_activity_title_edit_book">Edit Book</string>
+
     <!-- Label for editor menu option to save book and leave editor [CHAR LIMIT=20] -->
     <string name="action_save">Save</string>
 
@@ -32,7 +35,7 @@
     <!-- Label for overview category of attributes in the editor [CHAR LIMIT=30] -->
     <string name="category_general_info">Book Info</string>
     <!-- Label for gender information in the editor [CHAR LIMIT=30] -->
-    <string name="category_phone_type">Phone Type</string>
+    <string name="category_book_type">Book Type</string>
     <!-- Label for measurement information in the editor [CHAR LIMIT=30] -->
     <string name="category_supplier_info">Supplier\'s Info</string>
 
@@ -44,16 +47,67 @@
     <string name="hint_book_supplier_phone_number">Phone Number</string>
 
     <!-- Text hint for the price field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_price">Price</string>
+    <string name="hint_book_price">enter an integer price</string>
     <!-- Text hint for the quantity field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_quantity">Quantity</string>
+    <string name="hint_book_quantity">enter an integer quantity</string>
+
+    <!-- Label for dropdown menu option if the book type is a hardcover[CHAR LIMIT=20] -->
+    <string name="book_type_hardcover">Hardcover</string>
+    <!-- Label for dropdown menu option if the book type is a paperback[CHAR LIMIT=20] -->
+    <string name="book_type_paperback">Paperback</string>
+    <!-- Label for dropdown menu option if the book type is an electronic book [CHAR LIMIT=20] -->
+    <string name="book_type_electronic">Electronic</string>
 
 
-    <!-- Label for dropdown menu option if the book supplier's phone type is a home phone[CHAR LIMIT=20] -->
-    <string name="phone_type_home">Home</string>
-    <!-- Label for dropdown menu option if the book supplier's phone type is a mobile phone [CHAR LIMIT=20] -->
-    <string name="phone_type_mobile">Mobile</string>
-    <!-- Label for dropdown menu option if the book supplier's phone type is a work phone [CHAR LIMIT=20] -->
-    <string name="phone_type_work">Work</string>
+    <!-- Toast message in editor when new book has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_book_successful">Book saved</string>
+    <!-- Toast message in editor when new book has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_book_failed">Error with saving book</string>
+
+    <!-- Tools text for itembook.xml -->
+    <string name="item_book_title">The Godfather Returns</string>
+    <string name="item_book_price">$50.00</string>
+
+    <!--Text for empty book catalog listings -->
+    <string name="empty_view_title_text">Your book catalog is currently empty</string>
+    <string name="empty_view_subtitle_text">Start adding some books to your catalog</string>
+
+    <!-- Text Labels on what type of book to display for list books items -->
+    <string name="item_book_type_hardcover">HARDCOVER</string>
+    <string name="item_book_type_paperback">PAPERBACK</string>
+    <string name="item_book_type_electronic">ELECTRONIC</string>
+
+    <!-- Monetary unit for the price field in the editor activity. For Euros, replace the "$" with "\u20ac" or vice versa -->
+    <string name="editor_monetary_unit">\u20ac</string>
+
+    <!-- Toast Messages for the editor activity when data is saved into the database as INSERT or UPDATE -->
+    <string name="editor_toast_message_insert">You have successfully added the new book</string>
+    <string name="editor_toast_message_update">You have successfully updated the book information</string>
+    <string name="editor_toast_message_delete">You have successfully deleted the book</string>
+
+    <!-- Toast Messages for the editor activity when user accidentally press save with a blank editor-->
+    <string name="editor_toast_message_blank">Ooops, required \"Book Info\" cannot have blank information</string>
+
+    <!-- Discard changes dialog messages -->
+    <string name="unsaved_dialog_msg">Discard your changes and quit</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
+
+    <!-- Toast message in editor when current book was successfully deleted [CHAR LIMIT=NONE] -->
+    <string name="editor_delete_book_successful">Book deleted</string>
+
+    <!-- Toast message in editor when current book has failed to be deleted [CHAR LIMIT=NONE] -->
+    <string name="editor_delete_book_failed">Error with deleting book</string>
+
+    <!-- Dialog message to ask the user to confirm deleting the current book [CHAR LIMIT=NONE] -->
+    <string name="delete_dialog_msg">Delete this book?</string>
+
+    <!-- Dialog button text for the option to confirm deleting the current book [CHAR LIMIT=20] -->
+    <string name="delete">Delete</string>
+
+    <!-- Dialog button text for the option to cancel deletion of the current book [CHAR LIMIT=20] -->
+    <string name="cancel">Cancel</string>
+
+
 
 </resources>

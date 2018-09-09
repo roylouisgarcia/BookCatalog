@@ -12,9 +12,9 @@
 -->
 <resources>
     <!-- These are the options displayed in the gender drop-down Spinner -->
-    <string-array name="array_phone_options">
-        <item>@string/phone_type_home</item>
-        <item>@string/phone_type_mobile</item>
-        <item>@string/phone_type_work</item>
+    <string-array name="book_type_options">
+        <item>@string/book_type_hardcover</item>
+        <item>@string/book_type_paperback</item>
+        <item>@string/book_type_electronic</item>
     </string-array>
 </resources>

@@ -1,24 +1,35 @@
 package com.example.android.bookcatalog;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
-import com.example.android.bookcatalog.data.BookCatalogDbHelper;
+import com.example.android.bookcatalog.data.BookCatalogCursorAdapter;
 
-public class CatalogActivity extends AppCompatActivity {
 
-    private BookCatalogDbHelper mDbHelper;
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int BOOK_LOADER = 0;
+
+    BookCatalogCursorAdapter mCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,100 +44,36 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mDbHelper = new BookCatalogDbHelper(this);
 
-        displayDatabaseInfo();
+        // Find the ListView which will be populated with the book data
+        final ListView bookListView = (ListView) findViewById(R.id.list);
 
+        // Find and set the empty view on the List View
+        View emptyView = findViewById(R.id.empty_view);
+        bookListView.setEmptyView(emptyView);
 
+        mCursorAdapter = new BookCatalogCursorAdapter(this, null);
+        bookListView.setAdapter(mCursorAdapter);
 
-    }
+        // Create an item click listener
+        bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
 
+                Uri currentBookUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, id);
 
-    private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        BookCatalogDbHelper mDbHelper = new BookCatalogDbHelper(this);
+                intent.setData(currentBookUri);
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-
-        String[] projection = {
-                BookEntry._ID,
-                BookEntry.COLUMN_BOOK_TITLE,
-                BookEntry.COLUMN_BOOK_PRICE,
-                BookEntry.COLUMN_BOOK_QUANTITY,
-                BookEntry.COLUMN_BOOK_SUPPLIER,
-                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER,
-                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE
-        };
-
-        Cursor cursor = db.query(
-                BookEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        TextView displayView = (TextView) findViewById(R.id.text_view_book);
-
-        try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // books table in the database).
-
-            displayView.setText("Using Cursor to see the what is inside the database: \n\n\tNumber of rows in books database table: " + cursor.getCount() + "\n");
-
-            // Creating a header in the Text View
-            displayView.append("\n\tCurrently the database has:\n\t" + BookEntry._ID + " - " + BookEntry.COLUMN_BOOK_TITLE + " - " + BookEntry.COLUMN_BOOK_PRICE + " - " + BookEntry.COLUMN_BOOK_QUANTITY + " - " +  BookEntry.COLUMN_BOOK_SUPPLIER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER + " - " + BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE + "\n");
-
-            // Figure out the index of each column
-
-            int idColumnIndex = cursor.getColumnIndex(BookEntry._ID);
-            int bookTitleColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
-            int bookPriceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
-            int bookQuantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
-            int supplierNameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
-            int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-            int supplierPhoneTypeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE);
-
-
-            // Iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentBookTitle = cursor.getString(bookTitleColumnIndex);
-                int currentBookPrice = cursor.getInt(bookPriceColumnIndex);
-                int currentBookQuantity = cursor.getInt(bookQuantityColumnIndex);
-                String currentSupplierName = cursor.getString(supplierNameColumnIndex);
-                String currentSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
-                int currentSupplierPhoneType = cursor.getInt(supplierPhoneTypeColumnIndex);
-
-                // Display the values from each column of the current row in the cursor in the TextView
-                displayView.append(("\n\t" + currentID + " - " +
-                        currentBookTitle + " - " +
-                        currentBookPrice + " - " +
-                        currentBookQuantity + " - " +
-                        currentSupplierName + " - " +
-                        currentSupplierPhoneNumber + " - " +
-                        currentSupplierPhoneType));
+                startActivity(intent);
             }
-            displayView.append("\n\n");
+        });
 
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
+        /* Prepare the loader */
+        getSupportLoaderManager().initLoader(0, null, this);
 
-        // Added to erase the dataPeeker message when other menu items other than the one inserting data from a populated activity_editor form
-        TextView displayViewPeek = (TextView) findViewById(R.id.text_view_data_peek);
-        displayViewPeek.setText("");
+
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,16 +85,16 @@ public class CatalogActivity extends AppCompatActivity {
     //This will insert a dummy data
     private void insertBook(){
         // Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        //SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Create a ContentValues object where column names are the keys,
         // and a made values are inserted.
         ContentValues values = new ContentValues();
         values.put(BookEntry.COLUMN_BOOK_TITLE, "Harry Potter");
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER, "JK Rowling");
-        values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_TYPE, BookEntry.PHONE_TYPE_HOME);
+        values.put(BookEntry.COLUMN_BOOK_TYPE, BookEntry.BOOK_TYPE_HARDCOVER);
         values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, "333-222-1111");
-        values.put(BookEntry.COLUMN_BOOK_PRICE, "$10");
+        values.put(BookEntry.COLUMN_BOOK_PRICE, "10");
         values.put(BookEntry.COLUMN_BOOK_QUANTITY, 10);
 
         // Insert a new row for Harry Potter in the database, returning the ID of that new row.
@@ -157,40 +104,28 @@ public class CatalogActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Harry Potter
-        long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+        //long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
+        Uri insertUri = getContentResolver().insert(BookEntry.CONTENT_URI, values);
 
-        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted", Toast.LENGTH_SHORT);
+        // String-holder to display the returned URI after the insert to the Toast Message
+        String uriString = insertUri.toString();
+
+        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted with URI: " + uriString, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     // This is used to delete all the books from the table
     private void deleteAllBooks(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.execSQL("delete from " + BookEntry.TABLE_NAME);
-        Toast toast2 = Toast.makeText(CatalogActivity.this, "Dummy Book entries will be deleted", Toast.LENGTH_SHORT);
+        int rowsDeleted = getContentResolver().delete(BookEntry.CONTENT_URI, null, null);
+        Toast toast2 = Toast.makeText(CatalogActivity.this, rowsDeleted + " books were deleted", Toast.LENGTH_SHORT);
         toast2.show();
     }
 
-    // This method extracts a string passed from the EditorActivity class; Exception catching is used to bypass a Null Pointer Exception when the app runs for the first time and has not visited the EditorActivity yet, thus dataPeeker value is NULL
-    private void displayDataPeek(){
-        Intent intent = getIntent();
-        String dataPeeker = "";
-        TextView textViewPeek = (TextView) findViewById(R.id.text_view_data_peek);
-        try{
-            dataPeeker = intent.getExtras().getString("dataPeeker");
-            textViewPeek.setText(dataPeeker);
-        }catch (NullPointerException nullPointer){
-            textViewPeek.setText("");
-        }
-
-    }
 
     // Refreshes the displayDatabaseInfo() from altering the database via FAB
     @Override
     protected void onStart() {
         super.onStart();
-        displayDatabaseInfo();
-        displayDataPeek();
     }
 
     @Override
@@ -199,18 +134,91 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                // Do nothing for now
                 insertBook();
-                displayDatabaseInfo();
-
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 deleteAllBooks();
-                displayDatabaseInfo();
-                // Do nothing for now
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        // This is a projection that will be used to construct a book item row
+        String[] projection = {
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_TITLE,
+                BookEntry.COLUMN_BOOK_PRICE,
+                BookEntry.COLUMN_BOOK_TYPE };
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this, BookEntry.CONTENT_URI, projection, null, null, null);
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * FragmentManager.openTransaction()} for further discussion on this.
+     * <p>
+     * <p>This function is guaranteed to be called prior to the release of
+     * the last data that was supplied for this Loader.  At this point
+     * you should remove all use of the old data (since it will be released
+     * soon), but should not do your own release of the data since its Loader
+     * owns it and will take care of that.  The Loader will take care of
+     * management of its data so you don't have to.  In particular:
+     * <p>
+     * <ul>
+     * <li> <p>The Loader will monitor for changes to the data, and report
+     * them to you through new calls here.  You should not monitor the
+     * data yourself.  For example, if the data is a {@link Cursor}
+     * and you place it in a {@link CursorAdapter}, use
+     * the {@link CursorAdapter#CursorAdapter(Context, * Cursor, int)} constructor <em>without</em> passing
+     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
+     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
+     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
+     * from doing its own observing of the Cursor, which is not needed since
+     * when a change happens you will get a new Cursor throw another call
+     * here.
+     * <li> The Loader will release the data once it knows the application
+     * is no longer using it.  For example, if the data is
+     * a {@link Cursor} from a {@link CursorLoader},
+     * you should not call close() on it yourself.  If the Cursor is being placed in a
+     * {@link CursorAdapter}, you should use the
+     * {@link CursorAdapter#swapCursor(Cursor)}
+     * method so that the old Cursor is not closed.
+     * </ul>
+     *
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursorAdapter.swapCursor(data);
+
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCursorAdapter.swapCursor(null);
+
     }
 }
