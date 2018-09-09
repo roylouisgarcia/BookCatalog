@@ -71,6 +71,17 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        // Use getIntent() and getData() to get the associated URI
+        Intent intent = getIntent();
+        Uri currentBookUri = intent.getData();
+
+        // if currentBookUri is null, we set the title to "Add a Pet", else, we se the title to "Edit Book"
+        if (currentBookUri == null){
+            setTitle("Add a Book");
+        } else {
+            setTitle(getString(R.string.editor_activity_title_edit_book));
+        }
+
         // Find all relevant views that we will need to read user input from
         mBookTitleEditText = (EditText) findViewById(R.id.edit_book_title);
         mSupplierPhoneEditText = (EditText) findViewById(R.id.edit_book_supplier_phone_number);

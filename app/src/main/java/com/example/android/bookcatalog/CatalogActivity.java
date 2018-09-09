@@ -1,5 +1,6 @@
 package com.example.android.bookcatalog;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -15,22 +16,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.android.bookcatalog.data.BookCatalogContract;
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
 import com.example.android.bookcatalog.data.BookCatalogCursorAdapter;
-import com.example.android.bookcatalog.data.BookCatalogDbHelper;
+
 
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int BOOK_LOADER = 0;
 
     BookCatalogCursorAdapter mCursorAdapter;
-
-    private BookCatalogDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +44,30 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(intent);
             }
         });
-        mDbHelper = new BookCatalogDbHelper(this);
 
         // Find the ListView which will be populated with the book data
-        ListView bookListView = (ListView) findViewById(R.id.list);
+        final ListView bookListView = (ListView) findViewById(R.id.list);
 
-        //Find and set the empty view on the List View
+        // Find and set the empty view on the List View
         View emptyView = findViewById(R.id.empty_view);
         bookListView.setEmptyView(emptyView);
 
         mCursorAdapter = new BookCatalogCursorAdapter(this, null);
         bookListView.setAdapter(mCursorAdapter);
+
+        // Create an item click listener
+        bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+
+                Uri currentBookUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, id);
+
+                intent.setData(currentBookUri);
+
+                startActivity(intent);
+            }
+        });
 
         /* Prepare the loader */
         getSupportLoaderManager().initLoader(0, null, this);
@@ -105,7 +117,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     // This is used to delete all the books from the table
     private void deleteAllBooks(){
         int rowsDeleted = getContentResolver().delete(BookEntry.CONTENT_URI, null, null);
-        Toast toast2 = Toast.makeText(CatalogActivity.this, "All books were deleted", Toast.LENGTH_SHORT);
+        Toast toast2 = Toast.makeText(CatalogActivity.this, rowsDeleted + " books were deleted", Toast.LENGTH_SHORT);
         toast2.show();
     }
 
