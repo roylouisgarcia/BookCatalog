@@ -1,5 +1,5 @@
-# Project 8: Books Catalog App
-This is the eight project deliverable for the Android Basic Nanodegree course at Udacity as part of the Grow with Google Scholarship. The goal of this project is to demonstrate and practice the Android data and file storage procedures. For this project, a book catalog will be built using available database manipulation helpers: SQLiteDatabase, Cursors, etc. Also, UI elements such as Spinners, FloatingActionButtons and menus are explored.
+# Project 8 & 9: Books Catalog App
+This is a two-parts project deliverable for the Android Basic Nanodegree course at Udacity as part of the Grow with Google Scholarship. The goal of this project is to demonstrate and practice the Android data and file storage procedures. For the first part of the project, a book catalog will be built using available database manipulation helpers: SQLiteDatabase, Cursors, etc. Also, UI elements such as Spinners, FloatingActionButtons and menus are explored. The second part of the project involved the use of ContentProviders, ContentResolvers, URIs, CursorLoaders, LoaderManagers, and concepts like sanity checking, or data validation.
 
 ### Prerequisites
 
