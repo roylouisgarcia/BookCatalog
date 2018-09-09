@@ -15,9 +15,12 @@
  */
 package com.example.android.bookcatalog;
 
+import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.content.CursorLoader;
 
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
 import com.example.android.bookcatalog.data.BookCatalogDbHelper;
@@ -39,7 +43,10 @@ import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 /**
  * Allows user to create a new book or edit an existing one.
  */
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    private Uri mCurrentBookUri;
+    private static final int EXISTING_BOOK_LOADER = 0;
 
     /** EditText field to enter the book's title */
     private EditText mBookTitleEditText;
@@ -73,13 +80,14 @@ public class EditorActivity extends AppCompatActivity {
 
         // Use getIntent() and getData() to get the associated URI
         Intent intent = getIntent();
-        Uri currentBookUri = intent.getData();
+        mCurrentBookUri = intent.getData();
 
         // if currentBookUri is null, we set the title to "Add a Pet", else, we se the title to "Edit Book"
-        if (currentBookUri == null){
+        if (mCurrentBookUri == null){
             setTitle("Add a Book");
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_book));
+            getLoaderManager().initLoader(EXISTING_BOOK_LOADER, null,this);
         }
 
         // Find all relevant views that we will need to read user input from
@@ -216,5 +224,84 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+// This is a projection that will be used to construct a book item row
+        String[] projection = {
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_TITLE,
+                BookEntry.COLUMN_BOOK_PRICE,
+                BookEntry.COLUMN_BOOK_QUANTITY,
+                BookEntry.COLUMN_BOOK_TYPE,
+                BookEntry.COLUMN_BOOK_SUPPLIER,
+                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER};
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this, mCurrentBookUri, projection, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //Bail early if the cursor is null or there is less than 1 row in the cursor
+        if (data == null || data.getCount() < 1){
+            return;
+        }
+
+        // Populate the input forms with data fetched from the database
+        if(data.moveToFirst()){
+            // Finding the comouns of book attributes that we need
+            int titleColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
+            int priceColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
+            int quantityColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
+            int typeColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
+            int supplierColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
+            int supplierPhoneNumberColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
+
+            // Extracting the value of the cursor for every column index
+            String title = data.getString(titleColumnIndex);
+            int price = data.getInt(priceColumnIndex);
+            int quantity = data.getInt(quantityColumnIndex);
+            int type = data.getInt(typeColumnIndex);
+            String supplier = data.getString(supplierColumnIndex);
+            String supplierPhoneNumber = data.getString(supplierPhoneNumberColumnIndex);
+
+            // Convert int to Strings
+            String priceString = String.valueOf(price);
+            String quantityString = String.valueOf(quantity);
+
+            // Updating the views from the screen with the values from the database
+            mBookTitleEditText.setText(title);
+            mBookPriceEditText.setText(priceString);
+            mBookQuantityEditText.setText(quantityString);
+            mSupplierNameEditText.setText(supplier);
+            mSupplierPhoneEditText.setText(supplierPhoneNumber);
+
+            // determine which dropdown is selected based on the value of book type from the database
+            switch (type){
+                case BookEntry.BOOK_TYPE_HARDCOVER:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_HARDCOVER);
+                    break;
+                case BookEntry.BOOK_TYPE_PAPERBACK:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_PAPERBACK);
+                    break;
+                default:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_ELECTRONIC);
+                    break;
+
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mBookTitleEditText.setText("");
+        mSupplierPhoneEditText.setText("");
+        mSupplierNameEditText.setText("");
+        mBookPriceEditText.setText("");
+        mBookQuantityEditText.setText("");
+        mBookTypeSpinner.setSelection(0);
     }
 }
