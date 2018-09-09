@@ -87,6 +87,12 @@ public class BookCatalogProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+
+        // Set notification URI on the curser,
+        // so we know what content URI the Cursor was created for.
+        // If the data at this URI changes, then we need to update the Cursor
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -145,6 +151,9 @@ public class BookCatalogProvider extends ContentProvider {
             return null;
         }
 
+        // Notify all listeners that the data has changed for the book content URI
+        getContext().getContentResolver().notifyChange(uri, null);
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
         return ContentUris.withAppendedId(uri, id);
@@ -166,10 +175,13 @@ public class BookCatalogProvider extends ContentProvider {
                 // arguments will be a String array containing the actual ID.
                 selection = BookCatalogContract.BookEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+
                 return updateBook(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
+
+
     }
 
     /**
@@ -218,7 +230,11 @@ public class BookCatalogProvider extends ContentProvider {
         // Update the selected books in the books database table with the given ContentValues
         int updateResult = db.update(BookCatalogContract.BookEntry.TABLE_NAME, values, selection, selectionArgs);
 
-        //  Return the number of rows that were affected
+        // Notify all listeners that the data has changed for the book content URI
+        if (updateResult != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+                   //  Return the number of rows that were affected
         return updateResult;
     }
 
@@ -230,19 +246,31 @@ public class BookCatalogProvider extends ContentProvider {
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
+        // Track the number of rows deleted
+        int rowsDeleted;
+
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case BOOKS:
                 // Delete all rows that match the selection and selection args
-                return database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case BOOK_ID:
                 // Delete a single row given by the ID in the URI
                 selection = BookCatalogContract.BookEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(BookCatalogContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
+
+        // If 1 or more rows were deleted, notify all listeners of data changes
+        if (rowsDeleted != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
+
     }
 
     /**

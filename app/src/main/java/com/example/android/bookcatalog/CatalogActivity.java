@@ -1,16 +1,16 @@
 package com.example.android.bookcatalog;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
@@ -25,6 +25,10 @@ import com.example.android.bookcatalog.data.BookCatalogCursorAdapter;
 import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int BOOK_LOADER = 0;
+
+    BookCatalogCursorAdapter mCursorAdapter;
 
     private BookCatalogDbHelper mDbHelper;
 
@@ -43,39 +47,21 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         });
         mDbHelper = new BookCatalogDbHelper(this);
 
-        displayDatabaseInfo();
+        // Find the ListView which will be populated with the book data
+        ListView bookListView = (ListView) findViewById(R.id.list);
 
-    }
-
-
-    private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-
-        String[] projection = {
-                BookEntry._ID,
-                BookEntry.COLUMN_BOOK_TITLE,
-                BookEntry.COLUMN_BOOK_PRICE,
-                BookEntry.COLUMN_BOOK_QUANTITY,
-                BookEntry.COLUMN_BOOK_SUPPLIER,
-                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER,
-                BookEntry.COLUMN_BOOK_TYPE};
-
-        Cursor cursor = getContentResolver().query(BookEntry.CONTENT_URI, projection, null, null, null);
-
-        ListView lvItems = (ListView) findViewById(R.id.list);
-
-        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        //Find and set the empty view on the List View
         View emptyView = findViewById(R.id.empty_view);
-        lvItems.setEmptyView(emptyView);
+        bookListView.setEmptyView(emptyView);
 
-        BookCatalogCursorAdapter bookAdapter = new BookCatalogCursorAdapter(this,cursor);
+        mCursorAdapter = new BookCatalogCursorAdapter(this, null);
+        bookListView.setAdapter(mCursorAdapter);
 
-        lvItems.setAdapter(bookAdapter);
+        /* Prepare the loader */
+        getSupportLoaderManager().initLoader(0, null, this);
 
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -112,15 +98,14 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // String-holder to display the returned URI after the insert to the Toast Message
         String uriString = insertUri.toString();
 
-        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted" + uriString, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(CatalogActivity.this, "Book data was inserted" + uriString, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     // This is used to delete all the books from the table
     private void deleteAllBooks(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.execSQL("delete from " + BookEntry.TABLE_NAME);
-        Toast toast2 = Toast.makeText(CatalogActivity.this, "Dummy Book entries will be deleted", Toast.LENGTH_SHORT);
+        int rowsDeleted = getContentResolver().delete(BookEntry.CONTENT_URI, null, null);
+        Toast toast2 = Toast.makeText(CatalogActivity.this, "All books were deleted", Toast.LENGTH_SHORT);
         toast2.show();
     }
 
@@ -129,7 +114,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onStart() {
         super.onStart();
-        displayDatabaseInfo();
     }
 
     @Override
@@ -140,13 +124,10 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             case R.id.action_insert_dummy_data:
                 // Do nothing for now
                 insertBook();
-                displayDatabaseInfo();
-
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 deleteAllBooks();
-                displayDatabaseInfo();
                 // Do nothing for now
                 return true;
         }
@@ -162,7 +143,16 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+
+        // This is a projection that will be used to construct a book item row
+        String[] projection = {
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_TITLE,
+                BookEntry.COLUMN_BOOK_PRICE,
+                BookEntry.COLUMN_BOOK_TYPE };
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this, BookEntry.CONTENT_URI, projection, null, null, null);
     }
 
     /**
@@ -205,6 +195,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursorAdapter.swapCursor(data);
 
     }
 
@@ -217,6 +208,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        mCursorAdapter.swapCursor(null);
 
     }
 }
