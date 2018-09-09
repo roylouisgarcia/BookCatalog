@@ -72,13 +72,13 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
         String bookTypeLabel = "";
         switch (bookType){
             case 0:
-                bookTypeLabel = context.getResources().getString(R.string.book_type_hardcover);
+                bookTypeLabel = context.getResources().getString(R.string.item_book_type_hardcover);
                 break;
             case 1:
-                bookTypeLabel = context.getResources().getString(R.string.book_type_paperback);
+                bookTypeLabel = context.getResources().getString(R.string.item_book_type_paperback);
                 break;
             default:
-                bookTypeLabel = context.getResources().getString(R.string.book_type_electronic);
+                bookTypeLabel = context.getResources().getString(R.string.item_book_type_electronic);
                 break;
         }
         itemTitleTextView.setText(bookTitle);

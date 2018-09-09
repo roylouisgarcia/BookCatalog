@@ -44,9 +44,9 @@
     <string name="hint_book_supplier_phone_number">Phone Number</string>
 
     <!-- Text hint for the price field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_price">Price</string>
+    <string name="hint_book_price">enter an integer price</string>
     <!-- Text hint for the quantity field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_quantity">Quantity</string>
+    <string name="hint_book_quantity">enter an integer quantity</string>
 
     <!-- Label for dropdown menu option if the book type is a hardcover[CHAR LIMIT=20] -->
     <string name="book_type_hardcover">Hardcover</string>
@@ -73,4 +73,9 @@
     <string name="item_book_type_hardcover">HARDCOVER</string>
     <string name="item_book_type_paperback">PAPERBACK</string>
     <string name="item_book_type_electronic">ELECTRONIC</string>
+
+    <!-- Monetary unit for the price field in the editor activity -->
+    <string name="editor_monetary_dollar">$</string>
+    <string name="editor_monetary_euros">\u20ac</string>
+
 </resources>
