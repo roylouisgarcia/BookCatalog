@@ -94,6 +94,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         if (mCurrentBookUri == null){
             setTitle("Add a Book");
             isNewBook = true;
+            invalidateOptionsMenu();
 
         } else {
             isNewBook = false;
@@ -264,6 +265,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        super.onPrepareOptionsMenu(menu);
+        if (mCurrentBookUri == null){
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+
+        }
+        return true;
+    }
 
 
     @Override
