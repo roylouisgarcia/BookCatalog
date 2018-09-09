@@ -30,16 +30,16 @@ Below is a screen recording of the Book Catalog App. Note: User Interface improv
 ## Inventory App, Stage 2 (Project 9):
 
 #### At this point, the app demonstrates the learners ability to 
-6. Understand the importance of using ContentProviders and how to refactor and replace direct access with database with the use of ContentProviders
-7. Understand how to use URIs and how ContentResolvers acts like a router between the UI Activities and the ContentProvider
-8. Integrate the Cursor, CursorLoaders, and LoaderManagers to provide a more robust thread managment for fetching data from ContentProviders 
+6. Understand the importance of using ContentProviders and re refactor the code to replace any methods that directly access the database with the more robust ContentProviders
+7. Understand how to use URIs along with ContentResolvers, which acts like a router between the UI Activities database calls and the ContentProvider
+8. Integrate the Cursor, CursorLoaders, and LoaderManagers to provide a more robust thread managment and app life-cycle database interactions via ContentProviders 
 9. Provide Sanity Checks or Data Validation to minimize errors during user inputs
 10. Load data from the database into UI input forms for Updates
 11. Applying good practice to improve the CRUD (Create, Read, Update, Delete) functionality of the Book Catalog App
 
 ### Screenshot Recording
 
-Below is a screen recording of the Book Catalog App. Note: User Interface improvement and more advanced concepts will be incorporated on Project 9:
+Below is a screen recording of the Book Catalog App after applying the concepts discussed in the Udacity video lessons. Note: More tweaking will be needed to satisfy the Project 9 rubics requirements:
 
 <img src="screencapture2.gif" alt="screen recording of the app" width="400px"/>
 
