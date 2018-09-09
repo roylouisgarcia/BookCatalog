@@ -6,12 +6,14 @@ This is the eight project deliverable for the Android Basic Nanodegree course at
 1. I had been following the lectures to make an interactive android app as part of Udacity's Grow With Google Anroid Basics Nanodegree [Udacity](https://www.udacity.com/course/android-basics-nanodegree-by-google--nd803)
 2. Download this repository and use Android Studio IDE to run the project locally via USB connected Android phone or Android Studio's AVD Manager.
 
-### Learning Milestone
+### Learning Milestones
 
-At this point, the app demonstrates the learners ability to 
+## Inventory App, Stage 1 (Project 8):
+
+#### At this point, the app demonstrates the learners ability to 
 1. Design and Create a database schema
 2. Install SQLite on own computer to practice SQL query statements
-3. Use Adroid Profiler or the deprecated Android Profiler from the GUI and the command line to export the actual database file created in the emulator
+3. Use Android Profiler or the deprecated Android Profiler from the GUI and the command line to export the actual database file created in the emulator
 4. Connect to the database, populate the database, and query via various Android UI
 5. Understand SQL Injection Risks and best mitigation practices
 
@@ -23,7 +25,31 @@ Below is a screen recording of the Book Catalog App. Note: User Interface improv
 
 ### App File Structure 
 
-![screen shot of the files involved in creating the app with the help of Gradle and the Android Studio IDE][filestruct]
+![screenshot of the files involved in creating the app with the help of Gradle and the Android Studio IDE][filestruct]
+
+## Inventory App, Stage 2 (Project 9):
+
+#### At this point, the app demonstrates the learners ability to 
+6. Understand the importance of using ContentProviders and how to refactor and replace direct access with database with the use of ContentProviders
+7. Understand how to use URIs and how ContentResolvers acts like a router between the UI Activities and the ContentProvider
+8. Integrate the Cursor, CursorLoaders, and LoaderManagers to provide a more robust thread managment for fetching data from ContentProviders 
+9. Provide Sanity Checks or Data Validation to minimize errors during user inputs
+10. Load data from the database into UI input forms for Updates
+11. Applying good practice to improve the CRUD (Create, Read, Update, Delete) functionality of the Book Catalog App
+
+### Screenshot Recording
+
+Below is a screen recording of the Book Catalog App. Note: User Interface improvement and more advanced concepts will be incorporated on Project 9:
+
+<img src="screencapture2.gif" alt="screen recording of the app" width="400px"/>
+
+### Screenshot of the CursorLoader Diagram from Udacity Youtube: https://www.youtube.com/watch?time_continue=1&v=eXCGoId2eoE 
+
+![screenshot of the CursorLoader Diagram from Udacity Youtube video ][cursorloader]
 
 
+
+
+
+[cursorloader]: https://github.com/roylouislgarcia/BookCatalog/blob/master/cursorloader.png
 [filestruct]: https://github.com/roylouislgarcia/BookCatalog/blob/master/filestructure.JPG
