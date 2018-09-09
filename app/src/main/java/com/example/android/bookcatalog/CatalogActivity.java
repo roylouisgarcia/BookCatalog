@@ -110,7 +110,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // String-holder to display the returned URI after the insert to the Toast Message
         String uriString = insertUri.toString();
 
-        Toast toast = Toast.makeText(CatalogActivity.this, "Book data was inserted" + uriString, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(CatalogActivity.this, "Dummy Book data was inserted with URI: " + uriString, Toast.LENGTH_SHORT);
         toast.show();
     }
 

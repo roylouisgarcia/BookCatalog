@@ -85,4 +85,8 @@
     <string name="editor_toast_message_update">You have successfully updated the book information</string>
     <string name="editor_toast_message_delete">You have successfully deleted the book</string>
 
+    <!-- Toast Messages for the editor activity when user accidentally press save with a blank editor-->
+    <string name="editor_toast_message_blank">Ooops, you cannot save a book with blank information</string>
+
+
 </resources>

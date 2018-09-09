@@ -73,6 +73,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     private int mBookType = 0;
 
+    // designed to prevent crashing on blank editor
+    private int safeToSaveFlag = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +108,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
 
         setupSpinner();
+
     }
 
     /**
@@ -147,50 +151,58 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
 
-    private void saveBook(){
+    private void saveBook() {
 
-        // Reading the inputs
-        String mBookTitleString = mBookTitleEditText.getText().toString().trim();
-        String mBookPriceString = mBookPriceEditText.getText().toString().trim();
-        int bookPrice = Integer.parseInt(mBookPriceString);
-        String mBookQuantityString = mBookQuantityEditText.getText().toString().trim();
-        int bookQuantity = Integer.parseInt(mBookQuantityString);
-        String mSupplierNameString = mSupplierNameEditText.getText().toString().trim();
-        String mSupplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
-        int bookType = mBookType;
+        if (TextUtils.isEmpty(mBookTitleEditText.getText()) || TextUtils.isEmpty(mBookPriceEditText.getText()) || TextUtils.isEmpty(mBookQuantityEditText.getText())) {
+            safeToSaveFlag++;
+        }
 
-        // Use ContentValues Object to prepare the paring of columns and value strings
-        ContentValues values = new ContentValues();
+        if (safeToSaveFlag == 0) {
+            // Reading the inputs
+            String mBookTitleString = mBookTitleEditText.getText().toString().trim();
+            String mBookPriceString = mBookPriceEditText.getText().toString().trim();
+            int bookPrice = Integer.parseInt(mBookPriceString);
+            String mBookQuantityString = mBookQuantityEditText.getText().toString().trim();
+            int bookQuantity = Integer.parseInt(mBookQuantityString);
+            String mSupplierNameString = mSupplierNameEditText.getText().toString().trim();
+            String mSupplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
+            int bookType = mBookType;
 
-        values.put(BookEntry.COLUMN_BOOK_TITLE, mBookTitleString);
-        values.put(BookEntry.COLUMN_BOOK_PRICE, bookPrice);
-        values.put(BookEntry.COLUMN_BOOK_QUANTITY, bookQuantity);
-        values.put(BookEntry.COLUMN_BOOK_SUPPLIER, mSupplierNameString);
-        values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, mSupplierPhoneString);
-        values.put(BookEntry.COLUMN_BOOK_TYPE, bookType);
+            // Use ContentValues Object to prepare the paring of columns and value strings
+            ContentValues values = new ContentValues();
+
+            values.put(BookEntry.COLUMN_BOOK_TITLE, mBookTitleString);
+            values.put(BookEntry.COLUMN_BOOK_PRICE, bookPrice);
+            values.put(BookEntry.COLUMN_BOOK_QUANTITY, bookQuantity);
+            values.put(BookEntry.COLUMN_BOOK_SUPPLIER, mSupplierNameString);
+            values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, mSupplierPhoneString);
+            values.put(BookEntry.COLUMN_BOOK_TYPE, bookType);
 
 
-        // Insert a new row for a book that is newly inserted to the database and return the ID of that new row.
-        Uri saveResultsNewBook;
-        int saveResultsUpdateBook;
-        if (isNewBook){
-            saveResultsNewBook = getContentResolver().insert(BookEntry.CONTENT_URI, values);
-            // Show a toast message for insertion result
-            // String-holder to display the returned URI after the insert to the Toast Message
-            String newRowId = String.valueOf(ContentUris.parseId(saveResultsNewBook));
-            if (newRowId == null) {
-                // If the row ID is -1, then there was an error with insertion.
-                Toast.makeText(this,R.string.editor_insert_book_failed, Toast.LENGTH_LONG).show();
+
+            Uri saveResultsNewBook;
+            int saveResultsUpdateBook;
+            if (isNewBook) {
+                saveResultsNewBook = getContentResolver().insert(BookEntry.CONTENT_URI, values);
+                // Show a toast message for insertion result
+                // String-holder to display the returned URI after the insert to the Toast Message
+                String newRowId = String.valueOf(ContentUris.parseId(saveResultsNewBook));
+                if (newRowId == null) {
+                    // If the row ID is -1, then there was an error with insertion.
+                    Toast.makeText(this, R.string.editor_insert_book_failed, Toast.LENGTH_LONG).show();
+                } else {
+                    // Otherwise, the insertion was successful and we can display a toast with the row ID.
+                    Toast.makeText(this, getResources().getString(R.string.editor_toast_message_insert) + ". This is book #" + newRowId + " on you catalog.", Toast.LENGTH_LONG).show();
+                }
             } else {
-                // Otherwise, the insertion was successful and we can display a toast with the row ID.
-                Toast.makeText(this, getResources().getString(R.string.editor_toast_message_insert) + ". This is book #" + newRowId + " on you catalog.", Toast.LENGTH_LONG).show();
+                // a variable to capture the id of the current book being updated to be used for the WHERE or 3rd parameter for ContentResolver update method
+                String currentIdOfBookBeingUpdated;
+                currentIdOfBookBeingUpdated = String.valueOf(ContentUris.parseId(mCurrentBookUri));
+                saveResultsUpdateBook = getContentResolver().update(mCurrentBookUri, values, currentIdOfBookBeingUpdated, null);
+                Toast.makeText(this, getResources().getString(R.string.editor_toast_message_update) + ". " + saveResultsUpdateBook + " row updated.", Toast.LENGTH_LONG).show();
             }
-        }else{
-            // a variable to capture the id of the current book being updated to be used for the WHERE or 3rd parameter for ContentResolver update method
-            String currentIdOfBookBeingUpdated;
-            currentIdOfBookBeingUpdated = String.valueOf(ContentUris.parseId(mCurrentBookUri));
-            saveResultsUpdateBook = getContentResolver().update(mCurrentBookUri, values, currentIdOfBookBeingUpdated, null);
-            Toast.makeText(this, getResources().getString(R.string.editor_toast_message_update)+ ". " + saveResultsUpdateBook + " row updated.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.editor_toast_message_blank), Toast.LENGTH_LONG).show();
         }
 
     }
