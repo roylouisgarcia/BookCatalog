@@ -18,10 +18,16 @@ package com.example.android.bookcatalog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -39,7 +45,7 @@ import com.example.android.bookcatalog.data.BookCatalogDbHelper;
 /**
  * Allows user to create a new book or edit an existing one.
  */
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /** EditText field to enter the book's title */
     private EditText mBookTitleEditText;
@@ -65,6 +71,8 @@ public class EditorActivity extends AppCompatActivity {
      */
     private int mBookType = 0;
 
+    private Uri mCurrentBookUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +81,10 @@ public class EditorActivity extends AppCompatActivity {
 
         // Use getIntent() and getData() to get the associated URI
         Intent intent = getIntent();
-        Uri currentBookUri = intent.getData();
+        mCurrentBookUri = intent.getData();
 
         // if currentBookUri is null, we set the title to "Add a Pet", else, we se the title to "Edit Book"
-        if (currentBookUri == null){
+        if (mCurrentBookUri == null){
             setTitle("Add a Book");
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_book));
@@ -88,9 +96,10 @@ public class EditorActivity extends AppCompatActivity {
         mSupplierNameEditText = (EditText) findViewById(R.id.edit_book_supplier_name);
         mBookPriceEditText = (EditText) findViewById(R.id.edit_book_price);
         mBookQuantityEditText = (EditText) findViewById(R.id.edit_book_quantity);
-        mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
+        mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_book_ype);
 
         setupSpinner();
+
     }
 
     /**
@@ -216,5 +225,82 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        // This is a projection that will be used to construct a book item row
+        String[] projection = {
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_TITLE,
+                BookEntry.COLUMN_BOOK_PRICE,
+                BookEntry.COLUMN_BOOK_QUANTITY,
+                BookEntry.COLUMN_BOOK_TYPE,
+                BookEntry.COLUMN_BOOK_SUPPLIER,
+                BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER};
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this, mCurrentBookUri, projection, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        //Bail early if the cursor is null or there is less than 1 row in the cursor
+        if (data == null || data.getCount() < 1){
+            return;
+        }
+
+        // Populate the input forms with data fetched from the database
+        if(data.moveToFirst()){
+            // Finding the comouns of book attributes that we need
+            int titleColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
+            int priceColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
+            int quantityColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
+            int typeColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
+            int supplierColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER);
+            int supplierPhoneNumberColumnIndex = data.getColumnIndex(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
+
+            // Extracting the value of the cursor for every column index
+            String title = data.getString(titleColumnIndex);
+            int price = data.getInt(priceColumnIndex);
+            int quantity = data.getInt(quantityColumnIndex);
+            int type = data.getInt(typeColumnIndex);
+            String supplier = data.getString(supplierColumnIndex);
+            String supplierPhoneNumber = data.getString(supplierPhoneNumberColumnIndex);
+
+            // Updating the views from the screen with the values from the database
+            mBookTitleEditText.setText(title);
+            mBookPriceEditText.setText(price);
+            mBookQuantityEditText.setText(quantity);
+            mSupplierNameEditText.setText(supplier);
+            mSupplierPhoneEditText.setText(supplierPhoneNumber);
+
+            // determine which dropdown is selected based on the value of book type from the database
+            switch (type){
+                case BookEntry.BOOK_TYPE_HARDCOVER:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_HARDCOVER);
+                    break;
+                case BookEntry.BOOK_TYPE_PAPERBACK:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_PAPERBACK);
+                    break;
+                default:
+                    mBookTypeSpinner.setSelection(BookEntry.BOOK_TYPE_ELECTRONIC);
+                    break;
+
+            }
+        }
+
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        mBookTitleEditText.setText("");
+        mSupplierPhoneEditText.setText("");
+        mSupplierNameEditText.setText("");
+        mBookPriceEditText.setText("");
+        mBookQuantityEditText.setText("");
+        mBookTypeSpinner.setSelection(0);
     }
 }

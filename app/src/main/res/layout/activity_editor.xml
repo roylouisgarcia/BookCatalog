@@ -95,7 +95,7 @@
 
             <!-- Book Type drop-down spinner -->
             <Spinner
-                android:id="@+id/spinner_supplier_phone_type"
+                android:id="@+id/spinner_book_ype"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:baselineAligned="false"
