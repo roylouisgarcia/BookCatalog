@@ -11,6 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceLarge"/>
+    <TextView
+        android:id="@+id/item_tv_monetary_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/item_tv_text_size"/>
 
     <TextView
         android:id="@+id/item_tv_price"

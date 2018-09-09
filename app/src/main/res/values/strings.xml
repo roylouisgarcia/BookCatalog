@@ -77,8 +77,12 @@
     <string name="item_book_type_paperback">PAPERBACK</string>
     <string name="item_book_type_electronic">ELECTRONIC</string>
 
-    <!-- Monetary unit for the price field in the editor activity -->
-    <string name="editor_monetary_dollar">$</string>
-    <string name="editor_monetary_euros">\u20ac</string>
+    <!-- Monetary unit for the price field in the editor activity. For Euros, replace the "$" with "\u20ac" or vice versa -->
+    <string name="editor_monetary_unit">\u20ac</string>
+
+    <!-- Toast Messages for the editor activity when data is saved into the database as INSERT or UPDATE -->
+    <string name="editor_toast_message_insert">You have successfully added the new book</string>
+    <string name="editor_toast_message_update">You have successfully updated the book information</string>
+    <string name="editor_toast_message_delete">You have successfully deleted the book</string>
 
 </resources>

@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.example.android.bookcatalog.R;
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
 
+import org.w3c.dom.Text;
+
 
 public class BookCatalogCursorAdapter extends CursorAdapter {
 
@@ -65,8 +67,10 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
 
         /* Extract the book attributes from the cursor for the current book */
         String bookTitle = cursor.getString(titleColumnIndex);
+        String bookPriceMonetarySymbol = context.getResources().getString(R.string.editor_monetary_unit);
         String bookPrice = cursor.getString(priceColumnIndex);
         Integer bookType = cursor.getInt(typeColumnIndex);
+
 
         /* identify which bookType label to display on an item list based on the numerical value */
         String bookTypeLabel = "";
@@ -82,7 +86,7 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
                 break;
         }
         itemTitleTextView.setText(bookTitle);
-        itemPriceTextView.setText("$" + bookPrice);
+        itemPriceTextView.setText(bookPriceMonetarySymbol + bookPrice);
         itemTypeTextView.setText(bookTypeLabel);
 
     }

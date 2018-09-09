@@ -38,7 +38,7 @@ import android.widget.Toast;
 import android.content.CursorLoader;
 
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
-import com.example.android.bookcatalog.data.BookCatalogDbHelper;
+
 
 /**
  * Allows user to create a new book or edit an existing one.
@@ -47,6 +47,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private Uri mCurrentBookUri;
     private static final int EXISTING_BOOK_LOADER = 0;
+    private Boolean isNewBook;
 
     /** EditText field to enter the book's title */
     private EditText mBookTitleEditText;
@@ -82,10 +83,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         Intent intent = getIntent();
         mCurrentBookUri = intent.getData();
 
+        // parsing the id for currentBook if exist and update
+
         // if currentBookUri is null, we set the title to "Add a Pet", else, we se the title to "Edit Book"
         if (mCurrentBookUri == null){
             setTitle("Add a Book");
+            isNewBook = true;
+
         } else {
+            isNewBook = false;
             setTitle(getString(R.string.editor_activity_title_edit_book));
             getLoaderManager().initLoader(EXISTING_BOOK_LOADER, null,this);
         }
@@ -141,7 +147,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
 
-    private void insertBooks(){
+    private void saveBook(){
 
         // Reading the inputs
         String mBookTitleString = mBookTitleEditText.getText().toString().trim();
@@ -152,12 +158,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String mSupplierNameString = mSupplierNameEditText.getText().toString().trim();
         String mSupplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
         int bookType = mBookType;
-
-        // Create an instance of a BookCataglogDbHelper
-        BookCatalogDbHelper mDbHelper = new BookCatalogDbHelper(this);
-
-        // Create an instance of the writable database of books
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Use ContentValues Object to prepare the paring of columns and value strings
         ContentValues values = new ContentValues();
@@ -171,22 +171,28 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
 
         // Insert a new row for a book that is newly inserted to the database and return the ID of that new row.
-//        long newRowId = db.insert(BookEntry.TABLE_NAME, null, values);
-
-        Uri insertResults = getContentResolver().insert(BookEntry.CONTENT_URI, values);
-
-        // String-holder to display the returned URI after the insert to the Toast Message
-        String uriString = insertResults.toString();
-        String newRowId = String.valueOf(ContentUris.parseId(insertResults));
-
-        // Show a toast message for insertion result
-        if (newRowId == null) {
-            // If the row ID is -1, then there was an error with insertion.
-            Toast.makeText(this,R.string.editor_insert_book_failed, Toast.LENGTH_LONG).show();
-        } else {
-            // Otherwise, the insertion was successful and we can display a toast with the row ID.
-            Toast.makeText(this, R.string.editor_insert_book_successful + newRowId + "\n" + uriString, Toast.LENGTH_LONG).show();
+        Uri saveResultsNewBook;
+        int saveResultsUpdateBook;
+        if (isNewBook){
+            saveResultsNewBook = getContentResolver().insert(BookEntry.CONTENT_URI, values);
+            // Show a toast message for insertion result
+            // String-holder to display the returned URI after the insert to the Toast Message
+            String newRowId = String.valueOf(ContentUris.parseId(saveResultsNewBook));
+            if (newRowId == null) {
+                // If the row ID is -1, then there was an error with insertion.
+                Toast.makeText(this,R.string.editor_insert_book_failed, Toast.LENGTH_LONG).show();
+            } else {
+                // Otherwise, the insertion was successful and we can display a toast with the row ID.
+                Toast.makeText(this, getResources().getString(R.string.editor_toast_message_insert) + ". This is book #" + newRowId + " on you catalog.", Toast.LENGTH_LONG).show();
+            }
+        }else{
+            // a variable to capture the id of the current book being updated to be used for the WHERE or 3rd parameter for ContentResolver update method
+            String currentIdOfBookBeingUpdated;
+            currentIdOfBookBeingUpdated = String.valueOf(ContentUris.parseId(mCurrentBookUri));
+            saveResultsUpdateBook = getContentResolver().update(mCurrentBookUri, values, currentIdOfBookBeingUpdated, null);
+            Toast.makeText(this, getResources().getString(R.string.editor_toast_message_update)+ ". " + saveResultsUpdateBook + " row updated.", Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -206,15 +212,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Insert data from form
-                insertBooks();
+                saveBook();
                 finish();
-                Toast toast_save = Toast.makeText(EditorActivity.this, "New Book Saved" , Toast.LENGTH_SHORT);
+                Toast toast_save = Toast.makeText(EditorActivity.this, "Book Saved" , Toast.LENGTH_SHORT);
                 toast_save.show();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Do nothing for now
-                Toast toast_delete = Toast.makeText(EditorActivity.this, "New Book Deleted", Toast.LENGTH_SHORT);
+                Toast toast_delete = Toast.makeText(EditorActivity.this, "Book Deleted", Toast.LENGTH_SHORT);
                 toast_delete.show();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
