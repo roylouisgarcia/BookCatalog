@@ -1,37 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/tv_item_margin">
+    android:padding="@dimen/tv_item_margin"
+    android:id="@+id/relativeLayout">
+
     <TextView
         android:id="@+id/item_tv_title"
-        tools:text="@string/item_book_title"
+        tools:text="The Godfather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceLarge"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="?android:textAppearanceLarge"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <TextView
         android:id="@+id/item_tv_monetary_symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/item_tv_text_size"/>
+        android:layout_marginRight="8dp"
+        android:textSize="@dimen/item_tv_text_size"
+        app:layout_constraintRight_toLeftOf="@id/item_tv_price"
+        tools:text="@string/editor_monetary_unit" />
 
     <TextView
         android:id="@+id/item_tv_price"
-        tools:text="@string/item_book_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/tv_item_margin"/>
-        android:textAppearance="?android:textAppearanceLarge"/>
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="34.92" />
 
     <TextView
         android:id="@+id/item_tv_type"
-        tools:text="@string/book_type_electronic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/tv_item_margin"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
         android:textColor="@android:color/holo_green_dark"
-        android:textSize="@dimen/item_tv_text_size"/>
+        android:textSize="@dimen/item_tv_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_tv_title"
+        tools:text="ELECTRONIC" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/item_img_sale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_salebutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_tv_price" />
+
+    <TextView
+        android:id="@+id/item_tv_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/item_img_sale"
+        app:layout_constraintTop_toBottomOf="@+id/item_tv_monetary_symbol" />
+
+</android.support.constraint.ConstraintLayout>

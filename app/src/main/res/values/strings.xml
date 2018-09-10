@@ -40,16 +40,16 @@
     <string name="category_supplier_info">Supplier\'s Info</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_title">Book Title</string>
+    <string name="hint_book_title">Title</string>
     <!-- Text hint for supplier field in the editor [CHAR LIMIT=30] -->
     <string name="hint_book_supplier">Name</string>
     <!-- Text hint for supplier field in the editor [CHAR LIMIT=30] -->
     <string name="hint_book_supplier_phone_number">Phone Number</string>
 
     <!-- Text hint for the price field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_price">enter an integer price</string>
+    <string name="hint_book_price">Book Price</string>
     <!-- Text hint for the quantity field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_book_quantity">enter an integer quantity</string>
+    <string name="hint_book_quantity">Quantity</string>
 
     <!-- Label for dropdown menu option if the book type is a hardcover[CHAR LIMIT=20] -->
     <string name="book_type_hardcover">Hardcover</string>
@@ -69,8 +69,9 @@
     <string name="item_book_price">$50.00</string>
 
     <!--Text for empty book catalog listings -->
-    <string name="empty_view_title_text">Your book catalog is currently empty</string>
-    <string name="empty_view_subtitle_text">Start adding some books to your catalog</string>
+    <string name="empty_view_title_text">We sell books, not empty shelves.</string>
+    <string name="empty_view_subtitle_text">\tSo, start adding some books by clicking the round button on the right-bottom corner..\n\t\tIt is important to NEVER leave these information blank: Book Title, Price, and Quantity\n\t\tThe rest are optional...</string>
+
 
     <!-- Text Labels on what type of book to display for list books items -->
     <string name="item_book_type_hardcover">HARDCOVER</string>
@@ -78,7 +79,7 @@
     <string name="item_book_type_electronic">ELECTRONIC</string>
 
     <!-- Monetary unit for the price field in the editor activity. For Euros, replace the "$" with "\u20ac" or vice versa -->
-    <string name="editor_monetary_unit">\u20ac</string>
+    <string name="editor_monetary_unit">$</string>
 
     <!-- Toast Messages for the editor activity when data is saved into the database as INSERT or UPDATE -->
     <string name="editor_toast_message_insert">You have successfully added the new book</string>
@@ -86,7 +87,7 @@
     <string name="editor_toast_message_delete">You have successfully deleted the book</string>
 
     <!-- Toast Messages for the editor activity when user accidentally press save with a blank editor-->
-    <string name="editor_toast_message_blank">Ooops, required \"Book Info\" cannot have blank information</string>
+    <string name="editor_toast_message_blank">Oh-uh, I did say "NEVER" leave the first three \"Book Info\" blank. </string>
 
     <!-- Discard changes dialog messages -->
     <string name="unsaved_dialog_msg">Discard your changes and quit</string>
@@ -107,6 +108,9 @@
 
     <!-- Dialog button text for the option to cancel deletion of the current book [CHAR LIMIT=20] -->
     <string name="cancel">Cancel</string>
+
+    <!-- message to let the user know that the quantity is at its lowest -->
+    <string name="editor_quantity_lowest">The quantity for this book is now 0.</string>
 
 
 

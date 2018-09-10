@@ -8,12 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.bookcatalog.R;
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
 
 import org.w3c.dom.Text;
+
+import static com.example.android.bookcatalog.R.drawable.ic_salebutton;
 
 
 public class BookCatalogCursorAdapter extends CursorAdapter {
@@ -59,17 +62,22 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
         TextView itemTitleTextView = (TextView) view.findViewById(R.id.item_tv_title);
         TextView itemPriceTextView = (TextView) view.findViewById(R.id.item_tv_price);
         TextView itemTypeTextView = (TextView) view.findViewById(R.id.item_tv_type);
+        ImageView itemSaleImageView = (ImageView) view.findViewById(R.id.item_img_sale);
+        TextView itemQuantityTextView = (TextView) view.findViewById(R.id.item_tv_quantity);
 
         /* Find the colums corresponding to the TextViews prepared to populate the item list */
         int titleColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TITLE);
         int priceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_PRICE);
         int typeColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_TYPE);
+        int quantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_BOOK_QUANTITY);
 
         /* Extract the book attributes from the cursor for the current book */
         String bookTitle = cursor.getString(titleColumnIndex);
         String bookPriceMonetarySymbol = context.getResources().getString(R.string.editor_monetary_unit);
-        String bookPrice = cursor.getString(priceColumnIndex);
+        Integer bookPrice = cursor.getInt(priceColumnIndex);
+        Double bookPriceToDecimal = (double) bookPrice/100;
         Integer bookType = cursor.getInt(typeColumnIndex);
+        Integer bookQuantity = cursor.getInt(quantityColumnIndex);
 
 
         /* identify which bookType label to display on an item list based on the numerical value */
@@ -86,8 +94,11 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
                 break;
         }
         itemTitleTextView.setText(bookTitle);
-        itemPriceTextView.setText(bookPriceMonetarySymbol + bookPrice);
+        // control the formatting of the price when shown in the listview
+        itemPriceTextView.setText("price: " +bookPriceMonetarySymbol + String.format("%.2f", bookPriceToDecimal));
         itemTypeTextView.setText(bookTypeLabel);
+        itemSaleImageView.setImageResource(R.drawable.ic_salebutton);
+        itemQuantityTextView.setText("qty: " + String.valueOf(bookQuantity));
 
     }
 }

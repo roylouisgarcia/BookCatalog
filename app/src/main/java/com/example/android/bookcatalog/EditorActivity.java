@@ -36,7 +36,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.CursorLoader;
 
@@ -79,6 +81,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     // a variable to keep track if updates are necessary
     private boolean mBookHasChanged = false;
 
+    // Global variables related to quantity button presses
+    private boolean initiateQuantity = false;
+    int quantity=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +93,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Use getIntent() and getData() to get the associated URI
         Intent intent = getIntent();
         mCurrentBookUri = intent.getData();
+
+
 
         // parsing the id for currentBook if exist and update
 
@@ -119,6 +127,101 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mBookTypeSpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
+
+        ImageButton imageButtonMinus = findViewById(R.id.edit_quantity_minus);
+        imageButtonMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // if the book already exists
+                if (mCurrentBookUri != null){
+                    // get current quantity from the editableText
+                    String quantityString = mBookQuantityEditText.getText().toString().trim();
+                    int quantity = Integer.valueOf(quantityString);
+
+                    if (quantity <= 0){
+                        // let the user know that quantity is at its lowest possible value
+                        Toast.makeText(getApplicationContext(), getString(R.string.editor_quantity_lowest), Toast.LENGTH_LONG).show();
+                    }else{
+                        quantity--;
+                        // update the EditText to reflect the new value of quantity
+                        ContentValues decreasedQuantityValues = new ContentValues();
+                        String decreasedQuantityString = Integer.toString(quantity);
+                        mBookQuantityEditText.setText(decreasedQuantityString, TextView.BufferType.EDITABLE);
+                        decreasedQuantityValues.put(BookEntry.COLUMN_BOOK_QUANTITY, decreasedQuantityString);
+                    }
+                } else{ // adding a new book
+                    // if quantity has no value even in the EditText, initiate quantity with zero
+                    if (!initiateQuantity) {
+                        initiateQuantity = true;
+                        mBookQuantityEditText.setText("0", TextView.BufferType.EDITABLE);
+                        // let the user know that quantity is at its lowest possible value
+                        Toast.makeText(getApplicationContext(), getString(R.string.editor_quantity_lowest), Toast.LENGTH_LONG).show();
+                    }else {
+
+                        // get current quantity from the editableText
+                        String quantityString = mBookQuantityEditText.getText().toString().trim();
+                        int quantity = Integer.valueOf(quantityString);
+                        if (quantity > 0) {
+                            quantity--;
+
+                            // update the EditText to reflect the new value of quantity
+                            ContentValues decreasedQuantityValues = new ContentValues();
+                            String decreasedQuantityString = Integer.toString(quantity);
+                            mBookQuantityEditText.setText(decreasedQuantityString, TextView.BufferType.EDITABLE);
+                            decreasedQuantityValues.put(BookEntry.COLUMN_BOOK_QUANTITY, decreasedQuantityString);
+                        }else {
+                            // let the user know that quantity is at its lowest possible value
+                            Toast.makeText(getApplicationContext(), getString(R.string.editor_quantity_lowest), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
+
+                }
+                
+            }
+        });
+
+
+        ImageButton imageButtonPlus = findViewById(R.id.edit_quantity_plus);
+        imageButtonPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // if the book already exists
+                if (mCurrentBookUri != null){
+                    // get current quantity from the editableText
+                    String quantityString = mBookQuantityEditText.getText().toString().trim();
+                    int quantity = Integer.valueOf(quantityString);
+                    // increase the quantity
+                    quantity++;
+                    // update the EditText to reflect the new value of quantity
+                    ContentValues increasedQuantityValues = new ContentValues();
+                    String increasedQuantityString = Integer.toString(quantity);
+                    mBookQuantityEditText.setText(increasedQuantityString, TextView.BufferType.EDITABLE);
+                    increasedQuantityValues.put(BookEntry.COLUMN_BOOK_QUANTITY, increasedQuantityString);
+
+                } else{ // adding a new book
+                    // if quantity has no value even in the EditText, initiate quantity with zero
+                    if (!initiateQuantity) {
+                        initiateQuantity = true;
+                        mBookQuantityEditText.setText("0", TextView.BufferType.EDITABLE);
+                        // let the user know that quantity is at its lowest possible value
+                        Toast.makeText(getApplicationContext(), getString(R.string.editor_quantity_lowest), Toast.LENGTH_LONG).show();
+                    }else {
+                        String quantityString = mBookQuantityEditText.getText().toString().trim();
+                        int quantity = Integer.valueOf(quantityString);
+                        // increase the quantity
+                        quantity++;
+                        // update the EditText to reflect the new value of quantity
+                        ContentValues increasedQuantityValues = new ContentValues();
+                        String increasedQuantityString = Integer.toString(quantity);
+                        mBookQuantityEditText.setText(increasedQuantityString, TextView.BufferType.EDITABLE);
+                        increasedQuantityValues.put(BookEntry.COLUMN_BOOK_QUANTITY, increasedQuantityString);
+                    }
+                }
+
+            }
+        });
 
     }
 
@@ -213,7 +316,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Reading the inputs
             String mBookTitleString = mBookTitleEditText.getText().toString().trim();
             String mBookPriceString = mBookPriceEditText.getText().toString().trim();
-            int bookPrice = Integer.parseInt(mBookPriceString);
+            Double bookPriceAsDouble = Double.parseDouble(mBookPriceString);
+            bookPriceAsDouble = bookPriceAsDouble*100;
+            int bookPriceAsInt = bookPriceAsDouble.intValue();
+
             String mBookQuantityString = mBookQuantityEditText.getText().toString().trim();
             int bookQuantity = Integer.parseInt(mBookQuantityString);
             String mSupplierNameString = mSupplierNameEditText.getText().toString().trim();
@@ -224,7 +330,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             ContentValues values = new ContentValues();
 
             values.put(BookEntry.COLUMN_BOOK_TITLE, mBookTitleString);
-            values.put(BookEntry.COLUMN_BOOK_PRICE, bookPrice);
+            values.put(BookEntry.COLUMN_BOOK_PRICE, bookPriceAsInt);
             values.put(BookEntry.COLUMN_BOOK_QUANTITY, bookQuantity);
             values.put(BookEntry.COLUMN_BOOK_SUPPLIER, mSupplierNameString);
             values.put(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, mSupplierPhoneString);
@@ -360,7 +466,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      * Perform the deletion of the book in the database.
      */
     private void deleteBook() {
-        // TODO: Implement this method
         if (mCurrentBookUri != null){
             String currentIdOfBookBeingDeleted;
             currentIdOfBookBeingDeleted = String.valueOf(ContentUris.parseId(mCurrentBookUri));
@@ -409,18 +514,17 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Extracting the value of the cursor for every column index
             String title = data.getString(titleColumnIndex);
             int price = data.getInt(priceColumnIndex);
+            Double priceToBeLoaded = (double)price/100;
+            String priceStringToBeLoaded = String.valueOf(priceToBeLoaded);
             int quantity = data.getInt(quantityColumnIndex);
             int type = data.getInt(typeColumnIndex);
             String supplier = data.getString(supplierColumnIndex);
             String supplierPhoneNumber = data.getString(supplierPhoneNumberColumnIndex);
-
-            // Convert int to Strings
-            String priceString = String.valueOf(price);
             String quantityString = String.valueOf(quantity);
 
             // Updating the views from the screen with the values from the database
             mBookTitleEditText.setText(title);
-            mBookPriceEditText.setText(priceString);
+            mBookPriceEditText.setText(priceStringToBeLoaded);
             mBookQuantityEditText.setText(quantityString);
             mSupplierNameEditText.setText(supplier);
             mSupplierPhoneEditText.setText(supplierPhoneNumber);
