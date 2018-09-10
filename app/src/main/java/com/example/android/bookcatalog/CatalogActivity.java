@@ -191,25 +191,4 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
-
-    //decrease quantity button
-    public void decreaseCount(int columnId, int quantity) {
-
-        if (quantity < 1) {
-            Toast.makeText(this, getString(R.string.editor_quantity_lowest),
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            quantity = quantity - 1;
-            Toast.makeText(this, getString(R.string.editor_quantity_change_inventory_success),
-                    Toast.LENGTH_SHORT).show();
-
-            ContentValues values = new ContentValues();
-            values.put(BookEntry.COLUMN_BOOK_QUANTITY, quantity);
-
-            Uri updateUri = ContentUris.withAppendedId(BookCatalogContract.BookEntry.CONTENT_URI, columnId);
-
-            getContentResolver().update(updateUri, values, null, null);
-
-        }
-    }
 }

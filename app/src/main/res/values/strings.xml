@@ -112,8 +112,8 @@
     <string name="cancel">Cancel</string>
 
     <!-- message to let the user know that the quantity is at its lowest -->
-    <string name="editor_quantity_lowest">The quantity for this book is now 0.</string>
-    <string name="editor_quantity_change_inventory_success">Quantity Updated</string>
+    <string name="editor_quantity_lowest">You need to order more of this book</string>
+    <string name="editor_quantity_change_inventory_success">One book sold</string>
 
 
 

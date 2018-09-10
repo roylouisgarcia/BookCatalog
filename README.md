@@ -37,15 +37,19 @@ Below is a screen recording of the Book Catalog App. Note: User Interface improv
 10. Load data from the database into UI input forms for Updates
 11. Applying good practice to improve the CRUD (Create, Read, Update, Delete) functionality of the Book Catalog App
 
-### Screenshot Recording
-
-Below is a screen recording of the Book Catalog App after applying the concepts discussed in the Udacity video lessons. Note: More tweaking will be needed to satisfy the Project 9 rubics requirements:
-
-<img src="screencapture2.gif" alt="screen recording of the app" width="400px"/>
-
 ### Screenshot of the CursorLoader Diagram from Udacity Youtube: https://www.youtube.com/watch?time_continue=1&v=eXCGoId2eoE 
 
 ![screenshot of the CursorLoader Diagram from Udacity Youtube video ][cursorloader]
+
+### Screenshot Recording
+
+Below is a screen recording of the Book Catalog App after applying the concepts discussed in the Udacity video lessons. 
+
+<img src="screencapture2.gif" alt="screen recording of the app" width="400px"/>
+
+After additional modifcations in order to satisfy Project 9 rubics requirements, the app now looks like this:
+
+<img src="screencapture3.gif" alt="screen recording of the app" width="400px"/>
 
 
 

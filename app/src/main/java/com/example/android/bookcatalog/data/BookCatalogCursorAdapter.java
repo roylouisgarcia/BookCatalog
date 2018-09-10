@@ -122,6 +122,7 @@ public class BookCatalogCursorAdapter extends CursorAdapter {
 
                 if (quantity > 0){
                     quantity--;
+                    Toast.makeText(context, context.getResources().getString(R.string.editor_quantity_change_inventory_success), Toast.LENGTH_LONG).show();
                 } else
                     Toast.makeText(context, context.getResources().getString(R.string.editor_quantity_lowest), Toast.LENGTH_LONG).show();
 
