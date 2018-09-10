@@ -221,6 +221,8 @@ public class BookCatalogProvider extends ContentProvider {
             }
         }
 
+
+
         if (values.size() == 0){
             return 0;
         }

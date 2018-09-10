@@ -25,4 +25,7 @@
 
     <!-- Primary dark color for the editor -->
     <color name="editorColorPrimaryDark">#394450</color>
+
+    <!-- Text Color for Empty List View -->
+    <color name="empty_listview_text">#452600</color>
 </resources>

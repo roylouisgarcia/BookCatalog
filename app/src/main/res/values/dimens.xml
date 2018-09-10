@@ -16,6 +16,9 @@
     <!-- Common margin value used throughout the app -->
     <dimen name="activity_margin">16dp</dimen>
 
+    <dimen name="empty_listview_text_padding">18dp</dimen>
+    <dimen name="empty_listview_left_padding">30dp</dimen>
+
     <!-- Gap between the title of the book and price in item_book.xml -->
     <dimen name="tv_item_margin">10dp</dimen>
 
