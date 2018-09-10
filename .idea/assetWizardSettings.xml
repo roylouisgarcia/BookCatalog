@@ -16,11 +16,26 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="jar:file:/E:/MyPrograms/Android/AndroidStudio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_box_black_24dp.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_minus" />
-                            <entry key="sourceFile" value="E:\MyData\MyLearning\AndroidBasicNanodegreeScholarship\ProjectRelatedFiles\Project9\minus.svg" />
+                            <entry key="color" value="f0514b" />
+                            <entry key="outputName" value="ic_add" />
+                            <entry key="sourceFile" value="E:\MyData\MyLearning\AndroidBasicNanodegreeScholarship\ProjectRelatedFiles\Project9\ic_phone.svg" />
                           </map>
                         </option>
                       </PersistentState>

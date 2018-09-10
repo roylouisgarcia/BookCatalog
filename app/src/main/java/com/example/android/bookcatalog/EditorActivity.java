@@ -103,11 +103,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             setTitle("Add a Book");
             isNewBook = true;
             invalidateOptionsMenu();
+            final ImageButton deleteBookButton = findViewById(R.id.editor_img_btn_trash);
+            deleteBookButton.setVisibility(View.INVISIBLE);
 
         } else {
             isNewBook = false;
             setTitle(getString(R.string.editor_activity_title_edit_book));
             getLoaderManager().initLoader(EXISTING_BOOK_LOADER, null,this);
+
+
+
         }
 
         // Find all relevant views that we will need to read user input from
@@ -117,14 +122,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mBookPriceEditText = (EditText) findViewById(R.id.edit_book_price);
         mBookQuantityEditText = (EditText) findViewById(R.id.edit_book_quantity);
         mBookTypeSpinner = (Spinner) findViewById(R.id.spinner_supplier_phone_type);
-
-        // Attach a TouchListener on fields that user may edit
-        mBookTitleEditText.setOnTouchListener(mTouchListener);
-        mSupplierPhoneEditText.setOnTouchListener(mTouchListener);
-        mSupplierNameEditText.setOnTouchListener(mTouchListener);
-        mBookPriceEditText.setOnTouchListener(mTouchListener);
-        mBookQuantityEditText.setOnTouchListener(mTouchListener);
-        mBookTypeSpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
 
@@ -178,7 +175,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
 
                 }
-                
+
             }
         });
 
@@ -223,6 +220,30 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
+        final ImageButton deleteBookButton = findViewById(R.id.editor_img_btn_trash);
+        deleteBookButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    // if the book already exists
+                                                    if (mCurrentBookUri != null) {
+                                                        showDeleteConfirmationDialog();
+                                                    }else{
+                                                        deleteBookButton.setClickable(false);
+                                                    }
+                                                }
+                                            }
+        );
+
+        // Attach a TouchListener on fields that user may edit
+        mBookTitleEditText.setOnTouchListener(mTouchListener);
+        mSupplierPhoneEditText.setOnTouchListener(mTouchListener);
+        mSupplierNameEditText.setOnTouchListener(mTouchListener);
+        mBookPriceEditText.setOnTouchListener(mTouchListener);
+        mBookQuantityEditText.setOnTouchListener(mTouchListener);
+        mBookTypeSpinner.setOnTouchListener(mTouchListener);
+        imageButtonPlus.setOnTouchListener(mTouchListener);
+        imageButtonMinus.setOnTouchListener(mTouchListener);
+        deleteBookButton.setOnTouchListener(mTouchListener);
     }
 
     // OnTouchListener that listens for any user touches on a View, implying that they are modifying

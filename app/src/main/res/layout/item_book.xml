@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:descendantFocusability="blocksDescendants"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/tv_item_margin"
@@ -48,12 +49,13 @@
         app:layout_constraintTop_toBottomOf="@+id/item_tv_title"
         tools:text="ELECTRONIC" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/item_img_sale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/white"
         android:src="@drawable/ic_salebutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_tv_price" />

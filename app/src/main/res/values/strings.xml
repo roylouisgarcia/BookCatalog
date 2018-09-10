@@ -38,6 +38,8 @@
     <string name="category_book_type">Book Type</string>
     <!-- Label for measurement information in the editor [CHAR LIMIT=30] -->
     <string name="category_supplier_info">Supplier\'s Info</string>
+    <!-- category label for the editor activity delete button -->
+    <string name="category_delete_label">Delete this Book</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_book_title">Title</string>
@@ -70,7 +72,7 @@
 
     <!--Text for empty book catalog listings -->
     <string name="empty_view_title_text">We sell books, not empty shelves.</string>
-    <string name="empty_view_subtitle_text">\tSo, start adding some books by clicking the round button on the right-bottom corner..\n\t\tIt is important to NEVER leave these information blank: Book Title, Price, and Quantity\n\t\tThe rest are optional...</string>
+    <string name="empty_view_subtitle_text">So, start adding some books by clicking the round button on the right-bottom corner..\n\nIt is important to NEVER leave these information blank: Book Title, Price, and Quantity\n\nThe rest are optional...</string>
 
 
     <!-- Text Labels on what type of book to display for list books items -->
@@ -111,6 +113,8 @@
 
     <!-- message to let the user know that the quantity is at its lowest -->
     <string name="editor_quantity_lowest">The quantity for this book is now 0.</string>
+
+
 
 
 
