@@ -21,6 +21,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.bookcatalog.data.BookCatalogContract;
 import com.example.android.bookcatalog.data.BookCatalogContract.BookEntry;
 import com.example.android.bookcatalog.data.BookCatalogCursorAdapter;
 
@@ -70,7 +71,9 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         });
 
         /* Prepare the loader */
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(BOOK_LOADER, null, this);
+
+
 
 
     }
@@ -186,5 +189,27 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
 
+    }
+
+
+    //decrease quantity button
+    public void decreaseCount(int columnId, int quantity) {
+
+        if (quantity < 1) {
+            Toast.makeText(this, getString(R.string.editor_quantity_lowest),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            quantity = quantity - 1;
+            Toast.makeText(this, getString(R.string.editor_quantity_change_inventory_success),
+                    Toast.LENGTH_SHORT).show();
+
+            ContentValues values = new ContentValues();
+            values.put(BookEntry.COLUMN_BOOK_QUANTITY, quantity);
+
+            Uri updateUri = ContentUris.withAppendedId(BookCatalogContract.BookEntry.CONTENT_URI, columnId);
+
+            getContentResolver().update(updateUri, values, null, null);
+
+        }
     }
 }

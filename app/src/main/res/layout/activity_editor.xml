@@ -154,10 +154,16 @@
                     android:layout_weight="3"
                     android:hint="@string/hint_book_supplier_phone_number"
                     android:inputType="phone"
-                    android:drawableRight="@drawable/ic_phone"
+                    android:drawableRight="@drawable/ic_contact_phone"
                     android:drawablePadding="@dimen/item_tv_text_size"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     tools:text="999-999-9999" />
+            <ImageButton
+                android:id="@+id/edit_supplier_phone_button"
+                android:src="@drawable/ic_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"/>
         </LinearLayout>
     </LinearLayout>
 

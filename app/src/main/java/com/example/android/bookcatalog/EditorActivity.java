@@ -15,6 +15,7 @@
  */
 package com.example.android.bookcatalog;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
@@ -22,10 +23,12 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -84,6 +87,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     // Global variables related to quantity button presses
     private boolean initiateQuantity = false;
     int quantity=0;
+
+    private static final int REQUEST_PHONE_CALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,6 +238,31 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                                                 }
                                             }
         );
+
+        // Phone or Order functionality
+        ImageButton phoneButton = findViewById(R.id.edit_supplier_phone_button);
+        phoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ActivityCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(
+                            EditorActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE},
+                            REQUEST_PHONE_CALL);
+                    return;
+                }
+
+                String number = mSupplierPhoneEditText.getText().toString().trim();
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + number));
+
+                getApplicationContext().startActivity(callIntent);
+
+            }
+        });
 
         // Attach a TouchListener on fields that user may edit
         mBookTitleEditText.setOnTouchListener(mTouchListener);
